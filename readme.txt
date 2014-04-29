@@ -1,5 +1,5 @@
 === Better HubSpot for Gravity Forms ===
-Contributors: Soben, bloqhead
+Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5

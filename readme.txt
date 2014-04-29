@@ -51,12 +51,18 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 
 == Changelog ==
 
+= 0.6 =
+* Fixed references to Settings page. Added link to it via WP-Admin/Plugins
+
 = 0.5 =
 * Integration with Forms HubSpot API
 * Connections add/edit/delete
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 0.6 =
+Fix for Settings page references on the site.
 
 = 0.5 =
 Initial Release.

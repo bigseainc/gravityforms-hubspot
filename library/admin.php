@@ -18,6 +18,7 @@
 		 */
 		public static function startup () {
 			add_action('admin_notices', array('bsdGFHubspotAdmin', '_show_plugin_messages'), 10);
+			add_filter( 'plugin_action_links_' . BSD_GF_HUBSPOT_BASENAME, array("bsdGFHubspotAdmin", "_show_extra_links") );
 
 			// Stylesheet and Javascript, if any
 			wp_register_style ( 'bsd_gf_hubspot_css', BSD_GF_HUBSPOT_PATH.'assets/style.css', array(), BSD_GF_HUBSPOT_VERSION );
@@ -29,6 +30,17 @@
 				add_filter ('gform_addon_navigation', array("bsdGFHubspotAdmin", "_gravityforms_add_submenus") );
 			}
 		} // function
+
+		/**
+		 *
+		 *
+		 *
+		 */
+		public static function _show_extra_links ( $links ) {
+			$settings_link = '<a href="'. get_admin_url(null, 'admin.php?page=gf_settings&subview=HubSpot') .'">Settings</a>';
+			array_unshift( $links, $settings_link );
+			return $links;
+		}
 
 		/**
 		 *	_show_plugin_messages ()
@@ -168,7 +180,7 @@
 							}
 
 							if ( !self::getValidationStatus() ) {
-								echo '<div id="message" class="error"><p>Please provide valid HubSpot Credentials on the <a href="/wp-admin/admin.php?page=gf_settings&subview=BSD+HubSpot">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
+								echo '<div id="message" class="error"><p>Please provide valid HubSpot Credentials on the <a href="'.get_admin_url(null, "admin.php?page=gf_settings&subview=HubSpot").'">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
 							}
 							else {
 								self::html_connections_list();
@@ -193,7 +205,7 @@
 			$connection_id = FALSE;
 
 			if ( !self::getValidationStatus() ) {
-				echo '<div class="error fade"><p>Invalid HubSpot Credentials. Please verify your credentials on the <a href="/wp-admin/admin.php?page=gf_settings&subview=BSD+HubSpot">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
+				echo '<div class="error fade"><p>Invalid HubSpot Credentials. Please verify your credentials on the <a href="'.get_admin_url(null, "admin.php?page=gf_settings&subview=HubSpot").'">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
 				self::html_connections_list();
 				return;
 			}
@@ -602,7 +614,7 @@
 			$setting_api_key = self::getAPIKey();
 
 			if ( !$setting_portal_id || $setting_portal_id == '' || !$setting_api_key || $setting_api_key == '' ) {
-				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot Credentials are Missing. Please go to the <a href="/wp-admin/admin.php?page=gf_settings&subview=BSD+HubSpot">Forms > Settings > HubSpot</a> page to supply valid HubSpot credentials.</p>';
+				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot Credentials are Missing. Please go to the <a href="'.get_admin_url(null, "admin.php?page=gf_settings&subview=HubSpot").'">Forms > Settings > HubSpot</a> page to supply valid HubSpot credentials.</p>';
 			}
 			elseif ( !self::getValidationStatus() ) {
 				// Show message if the hubspot credentials are INVALID (can't connect to API)

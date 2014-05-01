@@ -7,7 +7,7 @@
 	*/
 
 	class bsdGFHubspotAdmin extends bsdGFHubspotBase {
-		
+
 		/**
 		 *	startup ()
 		 *	
@@ -21,8 +21,11 @@
 			add_filter( 'plugin_action_links_' . BSD_GF_HUBSPOT_BASENAME, array("bsdGFHubspotAdmin", "_show_extra_links") );
 
 			// Stylesheet and Javascript, if any
-			wp_register_style ( 'bsd_gf_hubspot_css', BSD_GF_HUBSPOT_PATH.'assets/style.css', array(), BSD_GF_HUBSPOT_VERSION );
+			wp_register_style ( 'bsd_gf_hubspot_css', BSD_GF_HUBSPOT_URL . 'assets/style.css', array(), BSD_GF_HUBSPOT_VERSION );
 			wp_enqueue_style ( 'bsd_gf_hubspot_css' );
+
+			wp_register_script ( 'bsd_gf_hubspot_jquery', BSD_GF_HUBSPOT_URL . 'assets/scripts.js', array('jquery'), BSD_GF_HUBSPOT_VERSION, TRUE );
+			wp_enqueue_script ( 'bsd_gf_hubspot_jquery' );
 
 			if ( bsdGFHubspotAdmin::_gravityforms_status(FALSE) ) {
 				RGForms::add_settings_page("HubSpot", array("bsdGFHubspotAdmin", "html_page_settings"));
@@ -32,12 +35,28 @@
 		} // function
 
 		/**
+		 *	_get_settings_page_url
 		 *
+		 *	@param none
+		 *	@return string
+		 */
+		private static function _get_settings_page_url () {
+			return get_admin_url(null, 'admin.php?page=gf_settings&subview=HubSpot');
+		} // function
+		private static function _get_connections_page_url () {
+			return get_admin_url(null, 'admin.php?page=bsdgfhubspot_forms' );
+		} // function
+
+		/**
+		 * _show_extra_links ()
 		 *
+		 *		Show the 'settings' link for the HubSpot GF plugin when viewing the Plugins page.
 		 *
+		 *	@param array $links
+		 *	@return array
 		 */
 		public static function _show_extra_links ( $links ) {
-			$settings_link = '<a href="'. get_admin_url(null, 'admin.php?page=gf_settings&subview=HubSpot') .'">Settings</a>';
+			$settings_link = '<a href="'. self::_get_settings_page_url() .'">Settings</a>';
 			array_unshift( $links, $settings_link );
 			return $links;
 		}
@@ -45,7 +64,7 @@
 		/**
 		 *	_show_plugin_messages ()
 		 *	
-		 *		Show the error messages if we're missing HubSpot or Gravity Forms
+		 *		Run through all vital checks, showing the error messages if we're missing HubSpot or Gravity Forms
 		 *
 		 *	@param none
 		 *	@return none
@@ -92,6 +111,12 @@
 				$setting_include_analytics = self::includeAnalyticsCode();
 			}
 
+			// Check up on what "mode" we're using.
+			$oauth_selected = FALSE;
+			$api_selected = TRUE; // We're using the API mode by default (to not screw with the users who are already on this)
+
+
+			// Check up on the validation status of the data provided.
 			$validated = self::getValidationStatus();
 			$valid_status = '<i class="fa fa-times gf_keystatus_invalid"></i>';
 			if ( $validated ) {
@@ -116,6 +141,19 @@
 									</td>
 								</tr>
 								<tr>
+									<th scope="row"><label for="gf_bsdhubspot_connection_type">Connect to HubSpot via</label></th>
+									<td>
+										<p><label><input type="radio" name="gf_bsdhubspot_connection_type" value="oauth" <?php echo ($oauth_selected ? 'checked' : '');?> /> oAuth</label></p>
+										<p><label><input type="radio" name="gf_bsdhubspot_connection_type" value="apikey" <?php echo ($api_selected ? 'checked' : '');?> /> API</label></p>
+									</td>
+								</tr>
+								<tr class="connect_via_oauth <?php echo ($oauth_selected ? 'active' : 'inactive');?>">
+									<th scope="row"><label for="gf_bsdhubspot_oauth_key">Authenticate with HubSpot</label></th>
+									<td>
+										<a class="button" href="#">Click Here to Authenticate</a>
+									</td>
+								</tr>
+								<tr class="connect_via_api  <?php echo ($api_selected ? 'active' : 'inactive');?>">
 									<th scope="row"><label for="gf_bsdhubspot_api_key">HubSpot API Key</label></th>
 									<td>
 										<input type="text" style="width:350px" class="code pre" name="gf_bsdhubspot_api_key" value="<?php echo $setting_api_key; ?>" />
@@ -180,7 +218,7 @@
 							}
 
 							if ( !self::getValidationStatus() ) {
-								echo '<div id="message" class="error"><p>Please provide valid HubSpot Credentials on the <a href="'.get_admin_url(null, "admin.php?page=gf_settings&subview=HubSpot").'">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
+								echo '<div id="message" class="error"><p>Please provide valid HubSpot Credentials on the <a href="'.self::_get_settings_page_url().'">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
 							}
 							else {
 								self::html_connections_list();
@@ -205,7 +243,7 @@
 			$connection_id = FALSE;
 
 			if ( !self::getValidationStatus() ) {
-				echo '<div class="error fade"><p>Invalid HubSpot Credentials. Please verify your credentials on the <a href="'.get_admin_url(null, "admin.php?page=gf_settings&subview=HubSpot").'">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
+				echo '<div class="error fade"><p>Invalid HubSpot Credentials. Please verify your credentials on the <a href="'.self::_get_settings_page_url().'">Gravity Forms > Settings > HubSpot</a> page.</p></div>';
 				self::html_connections_list();
 				return;
 			}
@@ -275,7 +313,7 @@
 
 			echo '<h3>Match the fields in your HubSpot Form to the fields in your Gravity Form.</h3>';
 
-			echo '<p><a href="admin.php?page=bsdgfhubspot_forms">&laquo; Back to HubSpot Connections</a></p>';
+			echo '<p><a href="'.self::_get_connections_page_url().'">&laquo; Back to HubSpot Connections</a></p>';
 
 			// Get the GF Form
 			$gravity_fields = array ();
@@ -382,8 +420,8 @@
 
 							if ( $connections && count ( $connections ) > 0 ) :
 								foreach ( $connections as $connection ) :
-									$edit_url = 'admin.php?page=bsdgfhubspot_forms&sub=make_connection&connection_id=' . $connection->id;
-									$delete_url = 'admin.php?page=bsdgfhubspot_forms&sub=delete_connection&connection_id=' . $connection->id;
+									$edit_url = self::_get_connections_page_url().'&sub=make_connection&connection_id=' . $connection->id;
+									$delete_url = self::_get_connections_page_url().'&sub=delete_connection&connection_id=' . $connection->id;
 								?>
 									<tr valign="top" data-id="1">
 										<th scope="row" class="check-column"><input type="checkbox" name="form[]" value="1" class="bsdgf_checkbox"/></th>
@@ -614,7 +652,7 @@
 			$setting_api_key = self::getAPIKey();
 
 			if ( !$setting_portal_id || $setting_portal_id == '' || !$setting_api_key || $setting_api_key == '' ) {
-				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot Credentials are Missing. Please go to the <a href="'.get_admin_url(null, "admin.php?page=gf_settings&subview=HubSpot").'">Forms > Settings > HubSpot</a> page to supply valid HubSpot credentials.</p>';
+				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot Credentials are Missing. Please go to the <a href="'.self::_get_settings_page_url().'">Forms > Settings > HubSpot</a> page to supply valid HubSpot credentials.</p>';
 			}
 			elseif ( !self::getValidationStatus() ) {
 				// Show message if the hubspot credentials are INVALID (can't connect to API)

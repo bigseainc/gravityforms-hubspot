@@ -12,7 +12,7 @@
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '0.6');
+	define('BSD_GF_HUBSPOT_VERSION', '0.6.1');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
 	

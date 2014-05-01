@@ -3,7 +3,7 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API.
-		Version: 0.5
+		Version: 0.6
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/

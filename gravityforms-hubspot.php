@@ -3,13 +3,14 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API.
-		Version: 0.6
+		Version: 0.6.1
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/
 
 	define('BSD_GF_HUBSPOT_BASENAME', plugin_basename(__FILE__));
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
+	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'HubSpot for Gravity Forms');
 	define('BSD_GF_HUBSPOT_VERSION', '0.6');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");

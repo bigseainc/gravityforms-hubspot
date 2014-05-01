@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.8
-Stable tag: 0.6
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 
 == Changelog ==
 
+= 0.6.1 =
+* Cleaned up references to Settings/Connections pages for future expansion
+
 = 0.6 =
 * Fixed references to Settings page. Added link to it via WP-Admin/Plugins
 
@@ -60,6 +63,9 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 0.6.1 =
+Cleaned up Code References
 
 = 0.6 =
 Fix for Settings page references on the site.

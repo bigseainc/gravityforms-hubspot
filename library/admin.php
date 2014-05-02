@@ -47,7 +47,18 @@
 					'bsd_expires_in' => time() + (int)$_GET['expires_in'],
 				);
 
+				// Store this data
 				self::setOAuthToken( $data );
+
+				// Let's make sure it's ACCURATE data.
+				$api_check = self::_hubspot_validate_credentials($_GET['access_token'], BSD_GF_HUBSPOT_CLIENT_ID);
+				if ( $api_check === TRUE ) {
+					$data_validated = TRUE;
+					self::setValidationStatus("yes");
+				}
+				else {
+					self::setValidationStatus("no");
+				}
 
 			}
 		} // function
@@ -142,7 +153,7 @@
 											. '?client_id=' . BSD_GF_HUBSPOT_CLIENT_ID
 											. '&portalId=' . $setting_portal_id
 											. '&scope=leads-rw+offline'
-											. '&redirect_uri=' . self::_get_settings_page_url();
+											. '&redirect_uri=' . urlencode(self::_get_settings_page_url());
 			}
 			else {
 				$authorize_url = FALSE;

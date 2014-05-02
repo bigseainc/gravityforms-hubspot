@@ -12,12 +12,7 @@ This Gravity Forms add-on sends entry submission data to the HubSpot Customer Fo
 
 == Description ==
 
-This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API. Requires a HubSpot account and API access.
-
-Plugin is in active development.
-
-= Coming Up =
-1. oAuth integration
+This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API. Requires a HubSpot account and API/oAuth access. Plugin is in active development by the Big Sea team.
 
 == Installation ==
 
@@ -51,6 +46,10 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 
 == Changelog ==
 
+=0.7=
+* Rewrote HubSpot API connectivity to support oAuth capability
+* Added support for HubSpot oAuth. If you already have an account set up with the API Key, it will continue to work. oAuth is optional (but highly recommended)
+
 = 0.6.1 =
 * Cleaned up references to Settings/Connections pages for future expansion
 
@@ -64,8 +63,8 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 
 == Upgrade Notice ==
 
-= 0.6.1 =
-Cleaned up Code References
+= 0.7 =
+Introduces oAuth.
 
 = 0.6 =
 Fix for Settings page references on the site.

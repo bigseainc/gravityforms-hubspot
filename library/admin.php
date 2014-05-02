@@ -20,10 +20,11 @@
 			add_action('admin_notices', array('bsdGFHubspotAdmin', '_show_plugin_messages'), 10);
 			add_filter( 'plugin_action_links_' . BSD_GF_HUBSPOT_BASENAME, array("bsdGFHubspotAdmin", "_show_extra_links") );
 
+			self::checkForOAuthToken();
+
 			// Stylesheet and Javascript, if any
 			wp_register_style ( 'bsd_gf_hubspot_css', BSD_GF_HUBSPOT_URL . 'assets/style.css', array(), BSD_GF_HUBSPOT_VERSION );
 			wp_enqueue_style ( 'bsd_gf_hubspot_css' );
-
 			wp_register_script ( 'bsd_gf_hubspot_jquery', BSD_GF_HUBSPOT_URL . 'assets/scripts.js', array('jquery'), BSD_GF_HUBSPOT_VERSION, TRUE );
 			wp_enqueue_script ( 'bsd_gf_hubspot_jquery' );
 
@@ -34,18 +35,26 @@
 			}
 		} // function
 
+		public static function checkForOAuthToken () {
+			if ( isset($_GET['access_token']) 
+					&& isset($_GET['page']) && $_GET['page'] == 'gf_settings' 
+					&& isset($_GET['subview']) && $_GET['subview'] == 'HubSpot' ) {
+				// access_token, refresh_token, expires_in
+				$data = array (
+					'access_token' => $_GET['access_token'],
+					'refresh_token' => $_GET['refresh_token'],
+					'hs_expires_in' => $_GET['expires_in'],
+					'bsd_expires_in' => time() + (int)$_GET['expires_in'],
+				);
+
+				self::setOAuthToken( $data );
+
+			}
+		} // function
+
 		/**
-		 *	_get_settings_page_url
-		 *
-		 *	@param none
-		 *	@return string
-		 */
-		private static function _get_settings_page_url () {
-			return get_admin_url(null, 'admin.php?page=gf_settings&subview=HubSpot');
-		} // function
-		private static function _get_connections_page_url () {
-			return get_admin_url(null, 'admin.php?page=bsdgfhubspot_forms' );
-		} // function
+			HOOK FUNCTIONS
+		**/
 
 		/**
 		 * _show_extra_links ()
@@ -90,6 +99,7 @@
 			ADMIN PAGES
 		**/
 
+
 		/**
 		 *	html_page_settings ()
 		 *	
@@ -103,13 +113,17 @@
 				$setting_portal_id = stripslashes($_POST["gf_bsdhubspot_portal_id"]);
 				$setting_app_domain = stripslashes($_POST["gf_bsdhubspot_app_domain"]);
 				$setting_api_key = stripslashes($_POST["gf_bsdhubspot_api_key"]);
+				$setting_connection_type = stripslashes($_POST["gf_bsdhubspot_connection_type"]);
 				$setting_include_analytics = isset($_POST["gf_bsdhubspot_include_analytics"]);
 			} else {
 				$setting_portal_id = self::getPortalID();
 				$setting_app_domain = self::getAppDomain();
 				$setting_api_key = self::getAPIKey();
+				$setting_connection_type = self::getConnectionType();
 				$setting_include_analytics = self::includeAnalyticsCode();
 			}
+
+			$oauth_token = self::getOAuthTokenArray();
 
 			// Check up on what "mode" we're using.
 			$oauth_selected = FALSE;
@@ -118,9 +132,20 @@
 
 			// Check up on the validation status of the data provided.
 			$validated = self::getValidationStatus();
-			$valid_status = '<i class="fa fa-times gf_keystatus_invalid"></i>';
-			if ( $validated ) {
-				$valid_status = '<i class="fa fa-check gf_keystatus_valid"></i>';
+			$apikey_valid_status = '<i class="fa fa-times gf_keystatus_invalid"></i>';
+			if ( $validated && $setting_connection_type == 'apikey' ) {
+				$apikey_valid_status = '<i class="fa fa-check gf_keystatus_valid"></i>';
+			}
+
+			if ( $setting_portal_id != '' ) {
+				$authorize_url = 'https://app.hubspot.com/auth/authenticate'
+											. '?client_id=' . BSD_GF_HUBSPOT_CLIENT_ID
+											. '&portalId=' . $setting_portal_id
+											. '&scope=leads-rw+offline'
+											. '&redirect_uri=' . self::_get_settings_page_url();
+			}
+			else {
+				$authorize_url = FALSE;
 			}
 
 			?>
@@ -137,38 +162,35 @@
 									<th scope="row"><label for="gf_bsdhubspot_portal_id">HubSpot Hub ID</label> </th>
 									<td>
 										<input type="text" style="width:350px" class="code pre" name="gf_bsdhubspot_portal_id" value="<?php echo $setting_portal_id; ?>"/>
-										<?php echo $valid_status; ?>
 									</td>
 								</tr>
 								<tr>
 									<th scope="row"><label for="gf_bsdhubspot_connection_type">Connect to HubSpot via</label></th>
-									<td>
-										<p><label><input type="radio" name="gf_bsdhubspot_connection_type" value="oauth" <?php echo ($oauth_selected ? 'checked' : '');?> /> oAuth</label></p>
-										<p><label><input type="radio" name="gf_bsdhubspot_connection_type" value="apikey" <?php echo ($api_selected ? 'checked' : '');?> /> API</label></p>
+									<td id="connection_types">
+										<p><label><input type="radio" name="gf_bsdhubspot_connection_type" value="oauth" <?php echo ($setting_connection_type == 'oauth' ? 'checked' : '');?> /> oAuth</label></p>
+										<p><label><input type="radio" name="gf_bsdhubspot_connection_type" value="apikey" <?php echo ($setting_connection_type == 'apikey' ? 'checked' : '');?> /> API</label></p>
 									</td>
 								</tr>
-								<tr class="connect_via_oauth <?php echo ($oauth_selected ? 'active' : 'inactive');?>">
+								<tr class="connection_type_section connect_via_oauth">
 									<th scope="row"><label for="gf_bsdhubspot_oauth_key">Authenticate with HubSpot</label></th>
 									<td>
-										<a class="button" href="#">Click Here to Authenticate</a>
+										<?php if ( $authorize_url ) : ?>
+											<a class="button" href="<?php echo $authorize_url; ?>">Click Here to Authenticate</a>
+											<?php if ( $validated ) : ?>
+												<p class="description small">You are currently authenticated with HubSpot <i class="fa fa-check gf_keystatus_valid"></i></p>
+											<?php endif; ?>
+										<?php else : ?>
+											<p class="error">Requires the Hub ID first. Enter your Hub ID above and click save.</p>
+										<?php endif; ?>
 									</td>
 								</tr>
-								<tr class="connect_via_api  <?php echo ($api_selected ? 'active' : 'inactive');?>">
+								<tr class="connection_type_section connect_via_apikey">
 									<th scope="row"><label for="gf_bsdhubspot_api_key">HubSpot API Key</label></th>
 									<td>
 										<input type="text" style="width:350px" class="code pre" name="gf_bsdhubspot_api_key" value="<?php echo $setting_api_key; ?>" />
-										<?php echo $valid_status; ?>
+										<?php echo $apikey_valid_status; ?>
 									</td>
 								</tr>
-								<?php /* ?>
-								<tr>
-									<th scope="row"><label for="gf_bsdhubspot_app_domain">HubSpot Application Domain</label></th>
-									<td>
-										<input type="text" style="width:350px" class="code pre" name="gf_bsdhubspot_app_domain" value="<?php echo $setting_app_domain; ?>" />
-										<?php echo $valid_status; ?>
-									</td>
-								</tr> 
-								<?php //*/ ?>
 								<tr>
 									<th scope="row"><label for="gf_bsdhubspot_include_analytics">Include HubSpot Analytics JS?</label></th>
 									<td>
@@ -213,7 +235,7 @@
 									echo '<div class="updated fade"><p>Connection deleted successfully!</p></div>';
 								}
 								else {
-									echo '<div class="error fade"><p>Something went wrong. Either Invalid Connection ID, or unable to connect to Database.</p></div>';
+									echo '<div class="error"><p>Something went wrong. Either Invalid Connection ID, or unable to connect to Database.</p></div>';
 								}
 							}
 
@@ -236,10 +258,19 @@
 			<?php
 		} // function
 
+
+		/**
+		 *	html_connections_make ()
+		 *
+		 *		Attempt to connect the Gravity Form to the HubSpot form, per user selection.
+		 *
+		 *	@param none
+		 *	@return none
+		 */
 		public static function html_connections_make () {
 
 			$error = FALSE;
-			$forms_api = new HubSpot_Forms(self::getAPIKey());
+			$forms_api = self::getHubSpotFormsInstance();
 			$connection_id = FALSE;
 
 			if ( !self::getValidationStatus() ) {
@@ -387,6 +418,15 @@
 			
 		} // function
 
+
+		/**
+		 *	html_connections_list ()
+		 *
+		 *		Show the primary connections page, which is showing the ability to create a connection and to edit existing connections.
+		 *
+		 *	@param none
+		 *	@return none
+		 */
 		public static function html_connections_list () {
 
 			?>
@@ -454,8 +494,17 @@
 				</table>
 			</form>
 			<?php
-		}
+		} // function
 
+
+		/**
+		 *	_form_connections_make ()
+		 *
+		 *		The form for making form connections.
+		 *
+		 *	@param none
+		 *	@return none
+		 */
 		public static function _form_connection_make () {
 			$gf_forms = RGFormsModel::get_forms();
 			$gf_form_count = RGFormsModel::get_form_count();
@@ -504,6 +553,25 @@
 			<?php
 		} // function
 
+
+		/**
+			INTERNAL PRIVATE FUNCTIONS
+		**/
+
+		/**
+		 *	_get_settings_page_url / _get_connections_page_url
+		 *
+		 *	@param none
+		 *	@return string
+		 */
+		private static function _get_settings_page_url () {
+			return get_admin_url(null, 'admin.php?page=gf_settings&subview=HubSpot');
+		} // function
+		private static function _get_connections_page_url () {
+			return get_admin_url(null, 'admin.php?page=bsdgfhubspot_forms' );
+		} // function
+
+
 		/**
 			FORM SUBMISSION HANDLING
 		**/
@@ -524,22 +592,42 @@
 				$setting_app_domain = stripslashes($_POST["gf_bsdhubspot_app_domain"]);
 				$setting_api_key = stripslashes($_POST["gf_bsdhubspot_api_key"]);
 				$setting_include_analytics = (isset($_POST["gf_bsdhubspot_include_analytics"]) ? "yes" : "no");
-				update_option("gf_bsdhubspot_portal_id", $setting_portal_id);
-				update_option("gf_bsdhubspot_app_domain", $setting_app_domain);
-				update_option("gf_bsdhubspot_api_key", $setting_api_key);
-				update_option("gf_bsdhubspot_include_analytics", $setting_include_analytics);
+				$setting_connection_type = stripslashes($_POST["gf_bsdhubspot_connection_type"]);
+				self::setPortalID($setting_portal_id);
+				self::setAppDomain($setting_app_domain);
+				self::setAPIKey($setting_api_key);
+				self::setIncludeAnalytics($setting_include_analytics);
+				self::setConnectionType($setting_connection_type);
 
 				if ( $echo ) echo '<div class="updated fade"><p>Settings Saved Successfully</p></div>';
 
 				// Let's validate the data.
-				$api_check = self::_hubspot_validate_credentials($setting_api_key, $setting_portal_id);
-				if ( $api_check === TRUE ) {
-					// if it's validated, let's mark it as such
-					update_option("gf_bsdhubspot_api_validated", "yes");
+				$data_validated = FALSE;
+				if ( $setting_connection_type == 'oauth' ) {
+					// Validate the oAUTH, folk.
+					$oauth_token = self::getOAuthToken();
+					if ( $oauth_token && $oauth_token != '' ) {
+						$api_check = self::_hubspot_validate_credentials($oauth_token, BSD_GF_HUBSPOT_CLIENT_ID);
+						if ( $api_check === TRUE ) {
+							$data_validated = TRUE;
+							self::setValidationStatus("yes");
+						}
+					}
 				}
-				else {
-					update_option("gf_bsdhubspot_api_validated", "no");
-					if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+				elseif ( $setting_connection_type == 'apikey' ) {
+					$api_check = self::_hubspot_validate_credentials($setting_api_key);
+					if ( $api_check === TRUE ) {
+						// if it's validated, let's mark it as such
+						$data_validated = TRUE;
+						self::setValidationStatus("yes");
+					}
+					else {
+						if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+					}
+				}
+				
+				if ( !$data_validated ) {
+					self::setValidationStatus("no");
 				}
 
 				return TRUE;
@@ -558,7 +646,7 @@
 		 *	@return bool|string
 		 */
 		private static function _validate_connection ( $forms_api=FALSE, $echo=TRUE ) {
-			if ( !$forms_api ) $forms_api = new HubSpot_Forms(self::getAPIKey());
+			if ( !$forms_api ) $forms_api = self::getHubSpotFormsInstance();
 
 			$error = '';
 
@@ -609,12 +697,12 @@
 		/**
 		 *	_hubspot_validate_credentials ()
 		 *
-		 *	@param string $HAPIKey
-		 *	@param string $portal_id
-		 *	@return boolean
+		 *	@param string $key
+		 *	@param boolean $user_oauth
+		 *	@return bool|string
 		 */
-		private static function _hubspot_validate_credentials ( $HAPIKey, $portal_id ) {
-			$forms_api = new HubSpot_Forms($HAPIKey);
+		private static function _hubspot_validate_credentials ( $key, $use_oauth=FALSE ) {
+			$forms_api = new HubSpot_Forms($key, $use_oauth);
 
 			$forms = $forms_api->get_forms();
 			if ( isset($forms->status) && $forms->status == 'error' ) {
@@ -624,9 +712,18 @@
 			return TRUE;
 		} // function
 
+
+		/**
+		 *	_hubspot_get_forms ()
+		 *
+		 *		Returns the list of Forms from Hubspot
+		 *
+		 *	@param none
+		 *	@return array
+		 */
 		public static function _hubspot_get_forms () {
 
-			$forms_api = new HubSpot_Forms(self::getAPIKey());
+			$forms_api = self::getHubSpotFormsInstance();
 
 			$forms = $forms_api->get_forms();
 			if ( isset($forms->status) && $forms->status == 'error' ) {
@@ -651,14 +748,16 @@
 			$setting_app_domain = self::getAppDomain();
 			$setting_api_key = self::getAPIKey();
 
-			if ( !$setting_portal_id || $setting_portal_id == '' || !$setting_api_key || $setting_api_key == '' ) {
-				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot Credentials are Missing. Please go to the <a href="'.self::_get_settings_page_url().'">Forms > Settings > HubSpot</a> page to supply valid HubSpot credentials.</p>';
-			}
-			elseif ( !self::getValidationStatus() ) {
+			$validation_status = self::getValidationStatus();
+			$connection_type = self::getConnectionType();
+			if ( !$validation_status && $connection_type == 'apikey' ) {
 				// Show message if the hubspot credentials are INVALID (can't connect to API)
-				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - Invalid HubSpot credentials. Please provide valid HubSpot credentials. Plugin will not work correctly until valid credentials provided.</p>';
+				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot API Key Missing. Please provide valid HubSpot credentials. Plugin will not work correctly until valid credentials provided.</p>';
 			}
-
+			elseif ( !$validation_status && $connection_type == 'oauth' ) {
+				// Show message if the hubspot credentials are INVALID (can't connect to API)
+				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - HubSpot oAuth Connection Invalid. Please connect to HubSpot. Plugin will not work correctly until valid credentials provided.</p>';
+			}
 
 			// If we have a message, let's show it.
 			if ( isset ( $message ) ) {
@@ -724,5 +823,7 @@
 			return $menus;
 		} // function
 
+
 	} // class
-?>
+
+

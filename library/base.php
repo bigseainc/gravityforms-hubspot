@@ -9,21 +9,104 @@
 
 	class bsdGFHubspotBase {
 
-		// Variables
+		// Variables -- GET
 		public static function getAPIKey () {
 			return get_option("gf_bsdhubspot_api_key");
 		} // function
-		public static function getPortalID () {
-			return get_option("gf_bsdhubspot_portal_id");
-		} // function
 		public static function getAppDomain () {
 			return get_option("gf_bsdhubspot_app_domain");
+		} // function
+		public static function getConnectionType () {
+			$type = get_option("gf_bsdhubspot_connection_type");
+			if ( !$type ) return 'apikey';
+			return $type;
+		} // function
+		public static function getOAuthTokenArray () {
+			$array = get_option("gf_bsdhubspot_oauth_token");
+			if ( !$array || !is_array($array) ) return FALSE;
+
+			// Let's make sure we don't need to refresh the token
+			if ( time() > $array['bsd_expires_in'] ) {
+				// We need to refresh the token. How?
+				require_once ( BSD_GF_HUBSPOT_PATH . 'library/hubspot/class.auth.php');
+				$api = new HubSpot_Auth(self::getAPIKey());
+				$new_token = $api->refreshOAuthToken($array['refresh_token'], BSD_GF_HUBSPOT_CLIENT_ID);
+				if ( !isset( $new_token->access_token ) ) {
+					self::setValidationStatus("no");
+					return FALSE;
+				}
+
+				// Example: {"portal_id":xxx,"expires_in":28799,"refresh_token":"yyy","access_token":"zzz"}
+				$data = array (
+					'access_token' => $new_token->access_token,
+					'refresh_token' => $new_token->refresh_token,
+					'hs_expires_in' => $new_token->expires_in,
+					'bsd_expires_in' => time() + (int)$new_token->expires_in,
+				);
+				self::setOAuthToken( $data );
+			} // endif
+
+			return $array;
+		} // function
+		public static function getOAuthToken () {
+			$array = self::getOAuthTokenArray();
+			if ( !$array || !is_array($array) ) return FALSE;
+			return $array['access_token'];
+		} // function
+		public static function getPortalID () {
+			return get_option("gf_bsdhubspot_portal_id");
 		} // function
 		public static function getValidationStatus () {
 			return (get_option("gf_bsdhubspot_api_validated") == "yes");
 		} // function
 		public static function includeAnalyticsCode () {
 			return (get_option("gf_bsdhubspot_include_analytics") == "yes");
+		} // function
+
+		// Variables -- SET
+		public static function setAPIKey ( $var ) {
+			return update_option("gf_bsdhubspot_api_key", $var);
+		} // function
+		public static function setAppDomain ( $var ) {
+			return update_option("gf_bsdhubspot_app_domain", $var);
+		} // function
+		public static function setConnectionType ( $var ) {
+			if ( $var != 'oauth' && $var != 'apikey') {
+				$var = 'apikey';
+			}
+			return update_option("gf_bsdhubspot_connection_type", $var);
+		} // function
+		public static function setIncludeAnalytics ( $var ) {
+			if ( $var != 'yes' && $var != 'no') {
+				$var = 'yes';
+			}
+			return update_option("gf_bsdhubspot_include_analytics", $var );
+		} // function
+		public static function setOAuthToken ( $var ) {
+			return update_option("gf_bsdhubspot_oauth_token", $var);
+		} // function
+		public static function setPortalID ( $var ) {
+			return update_option("gf_bsdhubspot_portal_id", $var);
+		} // function
+		public static function setValidationStatus ( $var ) {
+			if ( $var != 'yes' && $var != 'no') {
+				$var = 'yes';
+			}
+			return update_option("gf_bsdhubspot_api_validated", $var );
+		} // function
+
+
+		public static function getHubSpotFormsInstance () {
+			// Let's find out what mode we're in.
+			$connection_type = self::getConnectionType();
+
+			if ( $connection_type == 'oauth' ) {
+				// return oAUTH version.
+				return new HubSpot_Forms(self::getOAuthToken(), BSD_HUBSPOT_CLIENT_ID);
+			}
+
+			// Return the API KEY version
+			return new HubSpot_Forms(self::getAPIKey());
 		} // function
 		
 
@@ -159,4 +242,5 @@
 			}
 		} // function
 	} // class
-?>
+
+

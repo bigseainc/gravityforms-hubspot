@@ -2,10 +2,6 @@
 
 }
 
-.bsd_hubspot.wrap tr.active {
-	display: table-row;
-}
-
 .bsd_hubspot.wrap tr.inactive {
 	display: none;
 }

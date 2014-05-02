@@ -188,6 +188,3 @@ class HubSpot_Forms extends HubSpot_Baseclient{
 }
 
 
-
-
-?>

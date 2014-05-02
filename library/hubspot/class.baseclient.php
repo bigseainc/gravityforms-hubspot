@@ -21,7 +21,8 @@ class HubSpot_BaseClient
     // HubSpot_BaseClient class to be extended by specific hapi clients
 
     // Declare variables
-    protected $Key;
+    protected $KEY;
+    protected $CLIENT_ID;
     protected $API_PATH;
     protected $API_VERSION;
     protected $isTest = false;
@@ -61,16 +62,17 @@ class HubSpot_BaseClient
     /**
      * Constructor.
      *
-     * @param $Key: String value of HubSpot API Key for requests
+     * @param $KEY: String value of HubSpot API Key for requests
      */
-    public function __construct($Key,$use_oauth=FALSE,$user_agent=FALSE)
+    public function __construct($key,$client_id=FALSE,$user_agent=FALSE)
     {
         // Overrides HAPIKey with the oAuth token instead.
-        if ( $use_oauth ) {
+        if ( $client_id ) {
             $this->KEY_PARAM = '?access_token=';
+            $this->CLIENT_ID = $client_id;
         }
 
-        $this->Key = $Key;
+        $this->KEY = $key;
 
         if ( !$userAgent ) {
            $this->userAgent =  "haPiHP default UserAgent";
@@ -79,6 +81,14 @@ class HubSpot_BaseClient
             $this->userAgent = $userAgent;
         }
     }
+
+    /**
+     *
+     *
+     */
+    protected function build_key_params () {
+       return $this->KEY_PARAM . $this->KEY;
+    } // function
 
     /**
      * Gets the status code from the most recent curl request
@@ -161,7 +171,21 @@ class HubSpot_BaseClient
         $paramstring = $this->array_to_params($params);
 
         return $this->get_domain() . $this->PATH_DIV.$this->get_api() . $this->PATH_DIV . $this->get_api_version() .
-               $this->PATH_DIV . $endpoint . $this->KEY_PARAM . $this->Key . $paramstring;
+               $this->PATH_DIV . $endpoint . $this->build_key_params() . $paramstring;
+    }
+
+    /**
+     * Creates the url to be used for the api request for Auth API
+     *
+     * @param endpoint: String value for the endpoint to be used (appears after version in url)
+     * @param params: Array containing query parameters and values
+     *
+     * @returns String
+     */
+    protected function get_auth_request_url($endpoint)
+    {
+        return $this->get_domain() . $this->PATH_DIV.$this->get_api() . $this->PATH_DIV . $this->get_api_version() .
+               $this->PATH_DIV . $endpoint;
     }
 
     /**
@@ -176,7 +200,7 @@ class HubSpot_BaseClient
     {
         $paramstring = $this->array_to_params($params);
 
-        return $url_base . $this->KEY_PARAM . $this->Key . $paramstring;
+        return $url_base . $this->build_key_params() . $paramstring;
     }
 
     /**

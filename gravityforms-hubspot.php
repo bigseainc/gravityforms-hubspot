@@ -3,7 +3,7 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API.
-		Version: 0.6
+		Version: 0.7
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/
@@ -12,10 +12,11 @@
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '0.6');
+	define('BSD_GF_HUBSPOT_VERSION', '0.7');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
-	
+	define('BSD_GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
+
 	global $wpdb;
 	define('BSD_GF_HUBSPOT_TABLE', $wpdb->prefix . "rg_hubspot_connections");
 	define('BSD_GF_HUBSPOT_FORMFIELD_BASE', 'hsfield_');
@@ -99,30 +100,26 @@
 				return;
 			}
 
-			// @todo enable this
-			/*
-			if ( !isset($_COOKIE['hubspotutk']) ) {
-				// We NEED this cookie, apparently, for this shit to be "legal"
-				return;
-			}
-			//*/
-
 			if ( !($connections = self::getConnections($form['id'], 'gravityforms_id')) ) {
 				// We have nothing saved that's related to this Form. So we can ignore it.
 				return;
 			}
 
-			$forms_api = new HubSpot_Forms(self::getAPIKey());
+			$forms_api = self::getHubSpotFormsInstance();
 
+			// Let's go through all of the connections we have for this form.
 			foreach ( $connections as $connection ) :
 
+				// The HS Field : GF Field relationships
 				$hs_to_gf = $connection->form_data['connections']; // redundant chris is redundant.
 
+				// Go through all of the fields, and get the form entry that relates to them.
 				$form_fields = array ();
 				foreach ( $hs_to_gf as $hs => $gf ) {
 					$form_fields[$hs] = $entry[$gf];
 				}
 
+				// Compile all of this data into what we need for the Form Submission
 				$hubspotutk = $_COOKIE['hubspotutk'];
 				$ip_addr = $_SERVER['REMOTE_ADDR']; //IP address too.
 				$hs_context = array(
@@ -133,6 +130,7 @@
 				);
 				$hs_context_json = json_encode($hs_context);
 
+				// Try to send the form.
 				$result = $forms_api->submit_form(self::getPortalID(), $connection->hubspot_id, $form_fields, $hs_context);
 
 				if ( !$result ) {
@@ -172,3 +170,5 @@
 	} // class
 
 	add_action ( 'init',  array ( 'bsdGFHubspot', 'initalize') );
+
+

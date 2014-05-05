@@ -18,7 +18,7 @@
 		} // function
 		public static function getConnectionType () {
 			$type = get_option("gf_bsdhubspot_connection_type");
-			if ( !$type ) return 'apikey';
+			if ( !$type ) return 'oauth';
 			return $type;
 		} // function
 		public static function getOAuthTokenArray () {
@@ -72,7 +72,7 @@
 		} // function
 		public static function setConnectionType ( $var ) {
 			if ( $var != 'oauth' && $var != 'apikey') {
-				$var = 'apikey';
+				$var = 'oauth';
 			}
 			return update_option("gf_bsdhubspot_connection_type", $var);
 		} // function

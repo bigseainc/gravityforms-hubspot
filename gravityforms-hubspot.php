@@ -150,7 +150,11 @@
 		 *	@return none
 		 */
 		public static function activate () {
-			// Check if the table exists, if it doesn't let's make it.			
+			$old_version = get_option('gf_bsdhubspot_plugin_version');
+			if ( $old_version === FALSE ) $old_version = '0';
+			// if we need to update something: if ( version_compare($old_version, BSD_GF_HUBSPOT_VERSION, "<") )
+
+			// Any time we're activating the plugin, we need to make sure this table is still there. Vital to functionality.
 			$sql = "CREATE TABLE ".BSD_GF_HUBSPOT_TABLE." (
 				id mediumint(9) NOT NULL AUTO_INCREMENT,
 				gravityforms_id varchar(255) NOT NULL,
@@ -158,9 +162,18 @@
 				form_data text NULL,
 				UNIQUE KEY id (id)
 			);";
-
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta( $sql );
+
+			if ( version_compare($old_version, BSD_GF_HUBSPOT_VERSION, "<") ) {
+				self::setConnectionType('apikey');
+			}
+			else {
+				self::setConnectionType('oauth');
+			}
+
+			// Update the version to the latest
+			update_option('gf_bsdhubspot_plugin_version', BSD_GF_HUBSPOT_VERSION);
 		} // function
 
 		/**************************************************************************

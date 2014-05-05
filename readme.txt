@@ -48,7 +48,7 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 
 == Changelog ==
 
-=0.7=
+= 0.7 =
 * Rewrote HubSpot API connectivity to support oAuth capability
 * Added support for HubSpot oAuth. If you already have an account set up with the API Key, it will continue to work. oAuth is optional (but highly recommended)
 

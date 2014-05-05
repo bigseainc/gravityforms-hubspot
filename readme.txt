@@ -18,7 +18,7 @@ This Gravity Forms add-on sends entry submission data to the HubSpot Customer Fo
 
 1. Upload the files to the /wp-content/plugins/gravityforms-hubspot/ directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
-1. Go to Forms->Settings->HubSpot, and provide your Hub ID and API Key
+1. Go to Forms->Settings->HubSpot, and provide valid credentials to connect to your HubSpot Account either via oAuth (recommended) or API Key
 1. Go to Forms->HubSpot and make your first connection!
 
 *This plugin provides many checks for a proper version of Gravity Forms, as well as HubSpot API validation. Notices will appear at the top of the Admin panel until these issues are resolved or the plugin is deactivated.*
@@ -27,7 +27,9 @@ This Gravity Forms add-on sends entry submission data to the HubSpot Customer Fo
 
 = Is my Hub ID required? =
 
-No, only your API Key is required. However, if you want this plugin to provide the HubSpot Tracking Analytics script automatically for you, one must be provided in order to properly do so.
+Sort of. If you plan to connect to HubSpot via oAuth, yes, we do need your Hub ID. Also, if you want us to provide the HubSpot Analytics Tracking code in your theme, we'd need your Hub ID as well.
+
+If you're going to connect via API Key, we do not need your Hub ID.
 
 = Where do I find my HubSpot Hub ID? =
 
@@ -64,7 +66,7 @@ Copy and Paste the generated Token to the API Key field in Forms->Settings->HubS
 == Upgrade Notice ==
 
 = 0.7 =
-Introduces oAuth.
+Introduces oAuth. Highly recommend switching to oAuth (preferred by HubSpot)
 
 = 0.6 =
 Fix for Settings page references on the site.

@@ -31,7 +31,7 @@ Sort of. If you plan to connect to HubSpot via oAuth, yes, we do need your Hub I
 
 Also, if you want us to provide the HubSpot Analytics Tracking code in your theme, we'd need your Hub ID as well.
 
-* If you're going to connect via API Key, we do not need your Hub ID. *
+*If you're going to connect via API Key, we do not need your Hub ID.*
 
 = Where do I find my HubSpot Hub ID? =
 
@@ -40,7 +40,8 @@ After logging into your account on HubSpot.com, your Hub ID can be found with th
 = Where do I get a HubSpot API Key? =
 
 Fill out this form, and click "Get My API Key": https://app.hubspot.com/keys/get
-** We highly suggest you use oAuth instead, as it's more secure, and you can safely revoke our access at any time through HubSpot. **
+
+**We highly suggest you use oAuth instead, as it's more secure, and you can safely revoke our access at any time through HubSpot.**
 
 == Screenshots ==
 

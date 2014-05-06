@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 0.7
+Stable tag: 0.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,26 +27,32 @@ This Gravity Forms add-on sends entry submission data to the HubSpot Customer Fo
 
 = Is my Hub ID required? =
 
-Sort of. If you plan to connect to HubSpot via oAuth, yes, we do need your Hub ID. Also, if you want us to provide the HubSpot Analytics Tracking code in your theme, we'd need your Hub ID as well.
+Sort of. If you plan to connect to HubSpot via oAuth, yes, we do need your Hub ID. 
 
-If you're going to connect via API Key, we do not need your Hub ID.
+Also, if you want us to provide the HubSpot Analytics Tracking code in your theme, we'd need your Hub ID as well.
+
+* If you're going to connect via API Key, we do not need your Hub ID. *
 
 = Where do I find my HubSpot Hub ID? =
 
 After logging into your account on HubSpot.com, your Hub ID can be found with the product version at the bottom of your HubSpot Dashboard in the footer.
 
-= Where do I find my HubSpot API Key? =
+= Where do I get a HubSpot API Key? =
 
-While logged into your account on HubSpot.com, click your name on the top right corner of the page, and go to Settings. On the left sidebar click "API Access" and then click "Generate Token!"
-
-Copy and Paste the generated Token to the API Key field in Forms->Settings->HubSpot in the Wordpress Admin.
+Fill out this form, and click "Get My API Key": https://app.hubspot.com/keys/get
+** We highly suggest you use oAuth instead, as it's more secure, and you can safely revoke our access at any time through HubSpot. **
 
 == Screenshots ==
 
 1. The settings page
 2. The page for handling Gravity Forms to HubSpot form connections.
+3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 0.7.1 =
+* Updated the requirements for Gravity Forms to a minimum of 1.7.x, due to GFFormsModule not being available to v1.6.4, and we use this for the Connectivity. I will find a way around this.
+* Updated FAQ to properly show where the API Key can be found in HubSpot.
 
 = 0.7 =
 * Rewrote HubSpot API connectivity to support oAuth capability

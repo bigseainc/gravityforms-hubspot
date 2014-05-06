@@ -51,7 +51,7 @@
 				self::setOAuthToken( $data );
 
 				// Let's make sure it's ACCURATE data.
-				$api_check = self::_hubspot_validate_credentials($_GET['access_token'], BSD_GF_HUBSPOT_CLIENT_ID);
+				$api_check = self::_hubspot_validate_credentials($_GET['access_token'], self::getPortalID(), BSD_GF_HUBSPOT_CLIENT_ID);
 				if ( $api_check === TRUE ) {
 					$data_validated = TRUE;
 					self::setValidationStatus("yes");
@@ -618,7 +618,7 @@
 					// Validate the oAUTH, folk.
 					$oauth_token = self::getOAuthToken();
 					if ( $oauth_token && $oauth_token != '' ) {
-						$api_check = self::_hubspot_validate_credentials($oauth_token, BSD_GF_HUBSPOT_CLIENT_ID);
+						$api_check = self::_hubspot_validate_credentials($oauth_token, $setting_portal_id, BSD_GF_HUBSPOT_CLIENT_ID);
 						if ( $api_check === TRUE ) {
 							$data_validated = TRUE;
 							self::setValidationStatus("yes");
@@ -626,7 +626,7 @@
 					}
 				}
 				elseif ( $setting_connection_type == 'apikey' ) {
-					$api_check = self::_hubspot_validate_credentials($setting_api_key);
+					$api_check = self::_hubspot_validate_credentials($setting_api_key, $setting_portal_id);
 					if ( $api_check === TRUE ) {
 						// if it's validated, let's mark it as such
 						$data_validated = TRUE;
@@ -712,8 +712,8 @@
 		 *	@param boolean $user_oauth
 		 *	@return bool|string
 		 */
-		private static function _hubspot_validate_credentials ( $key, $use_oauth=FALSE ) {
-			$forms_api = new HubSpot_Forms($key, $use_oauth);
+		private static function _hubspot_validate_credentials ( $key, $hub_id, $use_oauth=FALSE ) {
+			$forms_api = new HubSpot_Forms($key, $hub_id, $use_oauth);
 
 			$forms = $forms_api->get_forms();
 			if ( isset($forms->status) && $forms->status == 'error' ) {
@@ -793,19 +793,21 @@
 		 */
 		private static function _gravityforms_status ( $echo=TRUE ) {
 
+			$message = '';
+
 			if(!class_exists('RGForms')) {
 				if(file_exists(WP_PLUGIN_DIR.'/gravityforms/gravityforms.php')) {
-					$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - Gravity Forms is installed but not active. <strong>Activate Gravity Forms</strong> to use this plugin.</p>';
+					$message .= '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - Gravity Forms is installed but not active. <strong>Activate Gravity Forms</strong> to use this plugin.</p>';
 				} else {
-					$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - <a href="http://gravityforms.com">Gravity Forms</a> is required. You do not have the Gravity Forms plugin enabled.</p>';
+					$message .= '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - <a href="http://gravityforms.com">Gravity Forms</a> is required. You do not have the Gravity Forms plugin enabled.</p>';
 				}
 			}
 
-			if ( !isset($message) && !bsdGFHubspotAdmin::_gravityforms_valid_version() ) {
-				$message = '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - A minimum version of '.BSD_GF_HUBSPOT_MIN_GFVERSION.' of Gravity Forms is required to run the HubSpot Addon. Please upgrade Gravity Forms.</p>';
+			if ( !self::_gravityforms_valid_version() ) {
+				$message .= '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - A minimum version of '.BSD_GF_HUBSPOT_MIN_GFVERSION.' of Gravity Forms is required to run the HubSpot Addon. Please upgrade Gravity Forms.</p>';
 			}
 
-			if ( isset ( $message ) ) {
+			if ( $message != '' ) {
 				if ( $echo ) echo '<div id="message" class="error">'.$message.'</div>';
 				return FALSE;
 			}

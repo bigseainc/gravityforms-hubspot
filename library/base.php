@@ -29,7 +29,7 @@
 			if ( time() > $array['bsd_expires_in'] ) {
 				// We need to refresh the token. How?
 				require_once ( BSD_GF_HUBSPOT_PATH . 'library/hubspot/class.auth.php');
-				$api = new HubSpot_Auth(self::getAPIKey());
+				$api = new HubSpot_Auth(self::getAPIKey(), self::getPortalID());
 				$new_token = $api->refreshOAuthToken($array['refresh_token'], BSD_GF_HUBSPOT_CLIENT_ID);
 				if ( !isset( $new_token->access_token ) ) {
 					self::setValidationStatus("no");
@@ -102,11 +102,11 @@
 
 			if ( $connection_type == 'oauth' ) {
 				// return oAUTH version.
-				return new HubSpot_Forms(self::getOAuthToken(), BSD_HUBSPOT_CLIENT_ID);
+				return new HubSpot_Forms(self::getOAuthToken(), self::getPortalID(), BSD_HUBSPOT_CLIENT_ID);
 			}
 
 			// Return the API KEY version
-			return new HubSpot_Forms(self::getAPIKey());
+			return new HubSpot_Forms(self::getAPIKey(), self::getPortalID());
 		} // function
 		
 
@@ -233,7 +233,7 @@
 		 *	@return boolean
 		 */
 		public static function _gravityforms_valid_version () {
-			if(class_exists("GFCommon")){
+			if(class_exists("GFCommon") && class_exists('GFFormsModel')){
 				$is_correct_version = version_compare(GFCommon::$version, BSD_GF_HUBSPOT_MIN_GFVERSION, ">=");
 				return $is_correct_version;
 			} 

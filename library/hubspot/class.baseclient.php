@@ -23,11 +23,13 @@ class HubSpot_BaseClient
     // Declare variables
     protected $KEY;
     protected $CLIENT_ID;
+    protected $HUB_ID;
     protected $API_PATH;
     protected $API_VERSION;
     protected $isTest = false;
     protected $PATH_DIV = '/';
     protected $KEY_PARAM = '?hapikey=';
+    protected $HUBID_PARAM = '&portalId=';
     protected $PROD_DOMAIN = 'https://api.hubapi.com';
     protected $QA_DOMAIN = 'https://hubapiqa.com';
     protected $userAgent;    // new
@@ -64,8 +66,8 @@ class HubSpot_BaseClient
      *
      * @param $KEY: String value of HubSpot API Key for requests
      */
-    public function __construct($key,$client_id=FALSE,$user_agent=FALSE)
-    {
+    public function __construct($key,$hub_id,$client_id=FALSE,$user_agent=FALSE) {
+
         // Overrides HAPIKey with the oAuth token instead.
         if ( $client_id ) {
             $this->KEY_PARAM = '?access_token=';
@@ -73,6 +75,7 @@ class HubSpot_BaseClient
         }
 
         $this->KEY = $key;
+        $this->HUB_ID = $hub_id;
 
         if ( !$userAgent ) {
            $this->userAgent =  "haPiHP default UserAgent";
@@ -87,7 +90,13 @@ class HubSpot_BaseClient
      *
      */
     protected function build_key_params () {
-       return $this->KEY_PARAM . $this->KEY;
+       $keyparams = $this->KEY_PARAM . $this->KEY;
+
+       /*if ( $this->KEY_PARAM == '?hapikey=' ) {
+        $keyparams .= $this->HUBID_PARAM . $this->HUB_ID;
+       }*/
+
+       return $keyparams;
     } // function
 
     /**

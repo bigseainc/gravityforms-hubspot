@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 0.7.1
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ This Gravity Forms add-on sends entry submission data to the HubSpot Customer Fo
 
 == Description ==
 
-This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API. Requires a HubSpot account and API/oAuth access. Plugin is in active development by the Big Sea team.
+This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API. Requires a HubSpot account with API/oAuth access. Plugin is in active development by the Big Sea team.
 
 == Installation ==
 
@@ -27,11 +27,9 @@ This Gravity Forms add-on sends entry submission data to the HubSpot Customer Fo
 
 = Is my Hub ID required? =
 
-Sort of. If you plan to connect to HubSpot via oAuth, yes, we do need your Hub ID. 
+Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*HubSpot for Wordpress, their official app, already includes this*)
 
-Also, if you want us to provide the HubSpot Analytics Tracking code in your theme, we'd need your Hub ID as well.
-
-*If you're going to connect via API Key, we do not need your Hub ID.*
+*If you are going to connect via API Key, and not include the tracking script, we do not need your Hub ID.*
 
 = Where do I find my HubSpot Hub ID? =
 
@@ -39,9 +37,9 @@ After logging into your account on HubSpot.com, your Hub ID can be found with th
 
 = Where do I get a HubSpot API Key? =
 
-Fill out this form, and click "Get My API Key": https://app.hubspot.com/keys/get
+Fill out the form on the following link, and click "Get My API Key": https://app.hubspot.com/keys/get -- You will receive an email containing your API Key, once approved.
 
-**We highly suggest you use oAuth instead, as it's more secure, and you can safely revoke our access at any time through HubSpot.**
+**We highly recommend you use oAuth: it's more secure, and you can safely (and easily) revoke access at any time through HubSpot.**
 
 == Screenshots ==
 

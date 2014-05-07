@@ -3,28 +3,32 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API.
-		Version: 0.7.1
+		Version: 1.0
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/
 
+	global $wpdb; // required for our table name constant
+
+	// Constants
 	define('BSD_GF_HUBSPOT_BASENAME', plugin_basename(__FILE__));
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
-	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '0.7.1');
-	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.7");
+	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'Better HubSpot for Gravity Forms');
+	define('BSD_GF_HUBSPOT_VERSION', '1.0');
+	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
 	define('BSD_GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
-
-	global $wpdb;
 	define('BSD_GF_HUBSPOT_TABLE', $wpdb->prefix . "rg_hubspot_connections");
 	define('BSD_GF_HUBSPOT_FORMFIELD_BASE', 'hsfield_');
 
+	// Important Files
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/base.php');
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/admin.php');
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/hubspot/class.forms.php');
 
+	// Hooks to Startup Plugin
+	add_action ( 'init',  array ( 'bsdGFHubspot', 'initalize') );
 	register_activation_hook( __FILE__, array('bsdGFHubspot', 'activate') );
 
 	class bsdGFHubspot extends bsdGFHubspotBase {
@@ -43,30 +47,35 @@
 				bsdGFHubspotAdmin::startup();
 			}
 
+			// If we don't have gravity forms, it's completely irrelevant what we do below.
 			if(!self::_gravityforms_valid_version()){
-				// We obviously need gravity forms
 				return;
 			}
 
+			// If we're visiting the front end of the site, and we have valid HubSpot credentials to work with... Let's move forward.
 			if ( !is_admin() && self::getValidationStatus() ) {
-
+				// If the user wanted analytics, let's load that up.
 				if ( self::includeAnalyticsCode() ) {
-					add_action("wp_footer", array("bsdGFHubspot", "_hubspot_add_analytics"), 10 );
+					add_action("wp_footer", array("bsdGFHubspot", "hubspot_add_analytics"), 10 );
 				}
 			
-				add_action("gform_after_submission", array("bsdGFHubspot", "_gravityforms_submission"), 10, 2);
+				add_action("gform_after_submission", array("bsdGFHubspot", "gravityforms_submission"), 10, 2);
 			}
 
 		} // function
 
 
 		/**
+		 * hubspot_add_analytics ()
 		 *
+		 *		Load the HubSpot Analytics Javascript, if the user requested it.
 		 *
+		 *	@param none
+		 *	@return none
 		 */
-		public static function _hubspot_add_analytics () {
-			if ( !self::getValidationStatus() ) {
-				// Nothing to do here. No valid Hubspot credentials.
+		public static function hubspot_add_analytics () {
+			if ( !self::getValidationStatus() || !self::includeAnalyticsCode () ) {
+				// Nothing to do here. No valid Hubspot credentials, or the user didn't want this. Redundancy check
 				return;
 			}
 
@@ -86,14 +95,14 @@
 
 
 		/**
-		 *	_gravityforms_submission ()
+		 *	gravityforms_submission ()
 		 *
 		 *		If there's a gravity form submission, let's see if we have a matching Hubspot Connection
 		 *
 		 *	@param array $entry
 		 *	@param array $form
 		 */
-		public static function _gravityforms_submission ( $entry, $form ) {
+		public static function gravityforms_submission ( $entry, $form ) {
 
 			if ( !self::getValidationStatus() ) {
 				// Nothing to do here. No valid Hubspot credentials.
@@ -107,6 +116,11 @@
 
 			$forms_api = self::getHubSpotFormsInstance();
 
+			if ( !$forms_api ) {
+				// @todo write to error log as to what the hell went wrong
+				return;
+			} 
+
 			// Let's go through all of the connections we have for this form.
 			foreach ( $connections as $connection ) :
 
@@ -116,7 +130,9 @@
 				// Go through all of the fields, and get the form entry that relates to them.
 				$form_fields = array ();
 				foreach ( $hs_to_gf as $hs => $gf ) {
-					$form_fields[$hs] = $entry[$gf];
+					if ( isset($entry[$gf]) ) {
+						$form_fields[$hs] = $entry[$gf];
+					}
 				}
 
 				// Compile all of this data into what we need for the Form Submission
@@ -138,6 +154,7 @@
 				}
 
 			endforeach;
+
 		} // function
 
 
@@ -152,7 +169,7 @@
 		public static function activate () {
 			$old_version = get_option('gf_bsdhubspot_plugin_version');
 			if ( $old_version === FALSE ) $old_version = '0';
-			// if we need to update something: if ( version_compare($old_version, BSD_GF_HUBSPOT_VERSION, "<") )
+			// if we need to update something, per version: if ( version_compare($old_version, BSD_GF_HUBSPOT_VERSION, "<") )
 
 			// Any time we're activating the plugin, we need to make sure this table is still there. Vital to functionality.
 			$sql = "CREATE TABLE ".BSD_GF_HUBSPOT_TABLE." (
@@ -165,23 +182,18 @@
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta( $sql );
 
-			if ( version_compare($old_version, BSD_GF_HUBSPOT_VERSION, "<") ) {
-				self::setConnectionType('apikey');
-			}
-			else {
-				self::setConnectionType('oauth');
-			}
+			// If we're dealing with anything older than 0.7, and doesn't have a ConnectionType set.
+			if ( self::getConnectionType() === FALSE ) {
+				if ( version_compare($old_version, '0.7', "<") ) {
+					self::setConnectionType('apikey');
+				}
+				else {
+					self::setConnectionType('oauth');
+				}
+			} // endif
 
-			// Update the version to the latest
+			// Update our tracking variable to this version
 			update_option('gf_bsdhubspot_plugin_version', BSD_GF_HUBSPOT_VERSION);
 		} // function
 
-		/**************************************************************************
-			Private Functions
-		**************************************************************************/
-
 	} // class
-
-	add_action ( 'init',  array ( 'bsdGFHubspot', 'initalize') );
-
-

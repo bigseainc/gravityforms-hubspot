@@ -13,9 +13,6 @@
 		public static function getAPIKey () {
 			return get_option("gf_bsdhubspot_api_key");
 		} // function
-		public static function getAppDomain () {
-			return get_option("gf_bsdhubspot_app_domain");
-		} // function
 		public static function getConnectionType () {
 			$type = get_option("gf_bsdhubspot_connection_type");
 			if ( !$type ) return 'oauth';
@@ -41,7 +38,7 @@
 					'access_token' => $new_token->access_token,
 					'refresh_token' => $new_token->refresh_token,
 					'hs_expires_in' => $new_token->expires_in,
-					'bsd_expires_in' => time() + (int)$new_token->expires_in
+					'bsd_expires_in' => (time() + (int)$new_token->expires_in) - 1800 // Let's do this a half hour earlier than too late.
 				);
 				self::setOAuthToken( $data );
 			} // endif
@@ -66,9 +63,6 @@
 		// Variables -- SET
 		public static function setAPIKey ( $var ) {
 			return update_option("gf_bsdhubspot_api_key", $var);
-		} // function
-		public static function setAppDomain ( $var ) {
-			return update_option("gf_bsdhubspot_app_domain", $var);
 		} // function
 		public static function setConnectionType ( $var ) {
 			if ( $var != 'oauth' && $var != 'apikey') {
@@ -102,11 +96,11 @@
 
 			if ( $connection_type == 'oauth' ) {
 				// return oAUTH version.
-				return new HubSpot_Forms(self::getOAuthToken(), self::getPortalID(), BSD_HUBSPOT_CLIENT_ID);
+				return new HubSpot_Forms(self::getOAuthToken(), BSD_HUBSPOT_CLIENT_ID);
 			}
 
 			// Return the API KEY version
-			return new HubSpot_Forms(self::getAPIKey(), self::getPortalID());
+			return new HubSpot_Forms(self::getAPIKey());
 		} // function
 		
 
@@ -154,7 +148,7 @@
 		 *	@param int $connection_id (optional)
 		 *	@return bool|int
 		 */
-		public static function saveConnection ( $gravityform_id, $hubspot_id, $incoming_data, $connection_id=FALSE ) {
+		protected static function _saveConnection ( $gravityform_id, $hubspot_id, $incoming_data, $connection_id=FALSE ) {
 			global $wpdb;
 
 			if ( !is_string($gravityform_id) ) $gravityform_id = (string)$gravityform_id;
@@ -209,7 +203,7 @@
 		 *	@param int $id
 		 *	@return bool
 		 */
-		public static function deleteConnection ( $id ) {
+		protected static function _deleteConnection ( $id ) {
 			global $wpdb;
 
 			$where = array (
@@ -232,7 +226,7 @@
 		 *	@param none
 		 *	@return boolean
 		 */
-		public static function _gravityforms_valid_version () {
+		protected static function _gravityforms_valid_version () {
 			if(class_exists("GFCommon") && class_exists('GFFormsModel')){
 				$is_correct_version = version_compare(GFCommon::$version, BSD_GF_HUBSPOT_MIN_GFVERSION, ">=");
 				return $is_correct_version;

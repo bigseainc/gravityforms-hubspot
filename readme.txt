@@ -51,6 +51,10 @@ Fill out this form, and click "Get My API Key": https://app.hubspot.com/keys/get
 
 == Changelog ==
 
+= 1.0 =
+* Tightened up code to release it as version 1.0
+* Brought back support to Gravity Forms 1.6
+
 = 0.7.1 =
 * Updated the requirements for Gravity Forms to a minimum of 1.7.x, due to GFFormsModule not being available to v1.6.4, and we use this for the Connectivity. I will find a way around this.
 * Updated FAQ to properly show where the API Key can be found in HubSpot.

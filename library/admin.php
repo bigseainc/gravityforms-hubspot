@@ -17,22 +17,22 @@
 		 *	@return none
 		 */
 		public static function startup () {
-			add_action('admin_notices', array('bsdGFHubspotAdmin', '_show_plugin_messages'), 10);
-			add_filter( 'plugin_action_links_' . BSD_GF_HUBSPOT_BASENAME, array("bsdGFHubspotAdmin", "_show_extra_links") );
 
-			self::checkForOAuthToken();
+			// Hooks
+			add_action('admin_notices', array('bsdGFHubspotAdmin', 'show_plugin_messages'), 10);
+			add_filter( 'plugin_action_links_' . BSD_GF_HUBSPOT_BASENAME, array("bsdGFHubspotAdmin", "show_extra_links") );
+			if ( bsdGFHubspotAdmin::_gravityforms_status(FALSE) ) {
+				// These are pretty specific to Gravity Forms being active, only run if we have Gravity Forms available.
+				RGForms::add_settings_page("HubSpot", array("bsdGFHubspotAdmin", "html_page_settings"));
+				add_filter ('gform_addon_navigation', array("bsdGFHubspotAdmin", "gravityforms_add_submenus") );
+			}
 
-			// Stylesheet and Javascript, if any
+			// enqueue Stylesheets and Javascript
 			wp_register_style ( 'bsd_gf_hubspot_css', BSD_GF_HUBSPOT_URL . 'assets/style.css', array(), BSD_GF_HUBSPOT_VERSION );
 			wp_enqueue_style ( 'bsd_gf_hubspot_css' );
 			wp_register_script ( 'bsd_gf_hubspot_jquery', BSD_GF_HUBSPOT_URL . 'assets/scripts.js', array('jquery'), BSD_GF_HUBSPOT_VERSION, TRUE );
 			wp_enqueue_script ( 'bsd_gf_hubspot_jquery' );
 
-			if ( bsdGFHubspotAdmin::_gravityforms_status(FALSE) ) {
-				RGForms::add_settings_page("HubSpot", array("bsdGFHubspotAdmin", "html_page_settings"));
-
-				add_filter ('gform_addon_navigation', array("bsdGFHubspotAdmin", "_gravityforms_add_submenus") );
-			}
 		} // function
 
 		public static function checkForOAuthToken () {
@@ -44,14 +44,14 @@
 					'access_token' => $_GET['access_token'],
 					'refresh_token' => $_GET['refresh_token'],
 					'hs_expires_in' => $_GET['expires_in'],
-					'bsd_expires_in' => time() + (int)$_GET['expires_in'],
+					'bsd_expires_in' => (time() + (int)$_GET['expires_in']) - 1800, // will run a half hour earlier than required
 				);
 
 				// Store this data
 				self::setOAuthToken( $data );
 
 				// Let's make sure it's ACCURATE data.
-				$api_check = self::_hubspot_validate_credentials($_GET['access_token'], self::getPortalID(), BSD_GF_HUBSPOT_CLIENT_ID);
+				$api_check = self::_hubspot_validate_credentials($_GET['access_token'], BSD_GF_HUBSPOT_CLIENT_ID);
 				if ( $api_check === TRUE ) {
 					$data_validated = TRUE;
 					self::setValidationStatus("yes");
@@ -68,33 +68,28 @@
 		**/
 
 		/**
-		 * _show_extra_links ()
+		 * show_extra_links ()
 		 *
 		 *		Show the 'settings' link for the HubSpot GF plugin when viewing the Plugins page.
 		 *
 		 *	@param array $links
 		 *	@return array
 		 */
-		public static function _show_extra_links ( $links ) {
+		public static function show_extra_links ( $links ) {
 			$settings_link = '<a href="'. self::_get_settings_page_url() .'">Settings</a>';
 			array_unshift( $links, $settings_link );
 			return $links;
 		}
 
 		/**
-		 *	_show_plugin_messages ()
+		 *	show_plugin_messages ()
 		 *	
-		 *		Run through all vital checks, showing the error messages if we're missing HubSpot or Gravity Forms
+		 *		Run through all vital checks, showing the error messages if we're missing HubSpot or Gravity Forms, or if the Save failed.
 		 *
 		 *	@param none
 		 *	@return none
 		 */
-		public static function _show_plugin_messages () {
-			
-			if ( count ( $_POST ) > 0 ) {
-				// We have POST data, so we might have a submission related to us. Let's check
-				self::_save_settings();
-			}
+		public static function show_plugin_messages () {
 
 			// Check if gravity forms is active or not. If it's not, then it'll show ONLY that message.
 			if ( self::_gravityforms_status () ) {
@@ -120,26 +115,29 @@
 		 *	@return none
 		 */
 		public static function html_page_settings () {
-			if(!empty($_POST["gf_bsdhubspot_submit"])) {
+
+			// Always checking for the oAuth tokens that might come in.
+			// 	@todo Really need to find a way to remove them from the URL afterwards
+			self::checkForOAuthToken();
+
+			if ( count ( $_POST ) > 0 ) {
+				// We have POST data, so we might have a submission related to us. Let's check
+				self::_save_settings();
+			}
+
+			if ( !empty($_POST["gf_bsdhubspot_submit"]) ) {
 				$setting_portal_id = stripslashes($_POST["gf_bsdhubspot_portal_id"]);
-				$setting_app_domain = stripslashes($_POST["gf_bsdhubspot_app_domain"]);
 				$setting_api_key = stripslashes($_POST["gf_bsdhubspot_api_key"]);
 				$setting_connection_type = stripslashes($_POST["gf_bsdhubspot_connection_type"]);
 				$setting_include_analytics = isset($_POST["gf_bsdhubspot_include_analytics"]);
 			} else {
 				$setting_portal_id = self::getPortalID();
-				$setting_app_domain = self::getAppDomain();
 				$setting_api_key = self::getAPIKey();
 				$setting_connection_type = self::getConnectionType();
 				$setting_include_analytics = self::includeAnalyticsCode();
 			}
 
 			$oauth_token = self::getOAuthTokenArray();
-
-			// Check up on what "mode" we're using.
-			$oauth_selected = FALSE;
-			$api_selected = TRUE; // We're using the API mode by default (to not screw with the users who are already on this)
-
 
 			// Check up on the validation status of the data provided.
 			$validated = self::getValidationStatus();
@@ -231,10 +229,6 @@
 		 */
 		public static function html_page_connections () {
 			?>
-				<style type="text/css">
-					.ul-square li { list-style: square!important; }
-					.ol-decimal li { list-style: decimal!important; }
-				</style>
 				<div class="wrap">
 					<?php
 						if ( !isset($_GET['sub']) || $_GET['sub'] != 'make_connection' ) : 
@@ -242,7 +236,7 @@
 							echo '<h2><span>HubSpot > Gravity Forms</span></h2>';
 
 							if ( $_GET['sub'] == 'delete_connection' ) {
-								if ( self::deleteConnection($_GET['connection_id'])) {
+								if ( self::_deleteConnection($_GET['connection_id'])) {
 									echo '<div class="updated fade"><p>Connection deleted successfully!</p></div>';
 								}
 								else {
@@ -327,10 +321,10 @@
 
 			if ( isset ($_POST['gf_bsdhubspot_connections']) ) {
 				// We have a submission with the connection form fields. Let's try to process that.
-				if ( self::_validate_connection( $forms_api ) === TRUE ) {
+				if ( self::_validate_formtoform_connection( $forms_api ) === TRUE ) {
 					// Let's try to save the data! WOOHOO.
 					$hubspot_form = $forms_api->get_form_by_id($hubspot_id);
-					$gravity_form = GFFormsModel::get_form_meta($gravityform_id);
+					$gravity_form = RGFormsModel::get_form_meta($gravityform_id);
 					$hubspot_to_gf_connections = array ();
 					if ( is_array($hubspot_form->fields) ) : foreach ( $hubspot_form->fields as $field ) : 
 						$hubspot_to_gf_connections[$field->name] = $_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name];
@@ -342,7 +336,7 @@
 						'connections' => $hubspot_to_gf_connections,
 					);
 
-					if ( !($connection_id = self::saveConnection ( $gravityform_id, $hubspot_id, $data_to_save, $connection_id )) ) {
+					if ( !($connection_id = self::_saveConnection ( $gravityform_id, $hubspot_id, $data_to_save, $connection_id )) ) {
 						echo '<div class="error fade"><p>We could not save the Connection for an unknown reason. Please try again.</p></div>';
 					}
 					else {
@@ -471,8 +465,8 @@
 
 							if ( $connections && count ( $connections ) > 0 ) :
 								foreach ( $connections as $connection ) :
-									$edit_url = self::_get_connections_page_url().'&sub=make_connection&connection_id=' . $connection->id;
-									$delete_url = self::_get_connections_page_url().'&sub=delete_connection&connection_id=' . $connection->id;
+									$edit_url = self::_get_connections_page_url('make_connection', $connection->id);
+									$delete_url = self::_get_connections_page_url('delete_connection', $connection->id);
 								?>
 									<tr valign="top" data-id="1">
 										<th scope="row" class="check-column"><input type="checkbox" name="form[]" value="1" class="bsdgf_checkbox"/></th>
@@ -523,7 +517,7 @@
 			$hs_forms = self::_hubspot_get_forms();
 			$hs_form_count = count($hs_forms);
 			?>
-			<form method="post" action="?page=bsdgfhubspot_forms&sub=make_connection">
+			<form method="post" action="<?php self::_get_connections_page_url('make_connection'); ?>">
 				<table>
 					<thead>
 						<tr>
@@ -578,8 +572,18 @@
 		private static function _get_settings_page_url () {
 			return get_admin_url(null, 'admin.php?page=gf_settings&subview=HubSpot');
 		} // function
-		private static function _get_connections_page_url () {
-			return get_admin_url(null, 'admin.php?page=bsdgfhubspot_forms' );
+		private static function _get_connections_page_url ( $sub=FALSE, $connection_id=FALSE) {
+			$url = get_admin_url(null, 'admin.php?page=bsdgfhubspot_forms' );
+
+			// &sub=make_connection&connection_id=
+			if ( $sub ) {
+				$url .= '&sub='.$sub;
+				if ( $connection_id ) {
+					$url .= '&connection_id=' . $connection_id;
+				}
+			}
+
+			return $url;
 		} // function
 
 
@@ -600,12 +604,10 @@
 			if ( isset($_POST['gf_bsdhubspot_update']) ) {
 				check_admin_referer("update", "gf_bsdhubspot_update");
 				$setting_portal_id = stripslashes($_POST["gf_bsdhubspot_portal_id"]);
-				$setting_app_domain = stripslashes($_POST["gf_bsdhubspot_app_domain"]);
 				$setting_api_key = stripslashes($_POST["gf_bsdhubspot_api_key"]);
 				$setting_include_analytics = (isset($_POST["gf_bsdhubspot_include_analytics"]) ? "yes" : "no");
 				$setting_connection_type = stripslashes($_POST["gf_bsdhubspot_connection_type"]);
 				self::setPortalID($setting_portal_id);
-				self::setAppDomain($setting_app_domain);
 				self::setAPIKey($setting_api_key);
 				self::setIncludeAnalytics($setting_include_analytics);
 				self::setConnectionType($setting_connection_type);
@@ -615,18 +617,27 @@
 				// Let's validate the data.
 				$data_validated = FALSE;
 				if ( $setting_connection_type == 'oauth' ) {
-					// Validate the oAUTH, folk.
-					$oauth_token = self::getOAuthToken();
-					if ( $oauth_token && $oauth_token != '' ) {
-						$api_check = self::_hubspot_validate_credentials($oauth_token, $setting_portal_id, BSD_GF_HUBSPOT_CLIENT_ID);
-						if ( $api_check === TRUE ) {
-							$data_validated = TRUE;
-							self::setValidationStatus("yes");
+					// Portal ID is required for oAuth, so, if one wasn't set, let's show message.
+					if ( $setting_portal_id == '' ) {
+						if ( $echo ) echo '<div class="error fade"><p>Portal ID is required for oAuth.</p></div>';
+					}
+					else {
+						// Validate the oAUTH, folk.
+						$oauth_token = self::getOAuthToken();
+						if ( $oauth_token && $oauth_token != '' ) {
+							$api_check = self::_hubspot_validate_credentials($oauth_token, BSD_GF_HUBSPOT_CLIENT_ID);
+							if ( $api_check === TRUE ) {
+								$data_validated = TRUE;
+								self::setValidationStatus("yes");
+							}
+						}
+						else {
+							if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
 						}
 					}
 				}
 				elseif ( $setting_connection_type == 'apikey' ) {
-					$api_check = self::_hubspot_validate_credentials($setting_api_key, $setting_portal_id);
+					$api_check = self::_hubspot_validate_credentials($setting_api_key);
 					if ( $api_check === TRUE ) {
 						// if it's validated, let's mark it as such
 						$data_validated = TRUE;
@@ -648,7 +659,7 @@
 		} // function
 
 		/**
-		 *	_validate_connection ()
+		 *	_validate_formtoform_connection ()
 		 *
 		 *		Validates the form data
 		 *
@@ -656,7 +667,7 @@
 		 *	@param bool $echo (optional)
 		 *	@return bool|string
 		 */
-		private static function _validate_connection ( $forms_api=FALSE, $echo=TRUE ) {
+		private static function _validate_formtoform_connection ( $forms_api=FALSE, $echo=TRUE ) {
 			if ( !$forms_api ) $forms_api = self::getHubSpotFormsInstance();
 
 			$error = '';
@@ -712,8 +723,8 @@
 		 *	@param boolean $user_oauth
 		 *	@return bool|string
 		 */
-		private static function _hubspot_validate_credentials ( $key, $hub_id, $use_oauth=FALSE ) {
-			$forms_api = new HubSpot_Forms($key, $hub_id, $use_oauth);
+		private static function _hubspot_validate_credentials ( $key, $use_oauth=FALSE ) {
+			$forms_api = new HubSpot_Forms($key, $use_oauth);
 
 			$forms = $forms_api->get_forms();
 			if ( isset($forms->status) && $forms->status == 'error' ) {
@@ -732,7 +743,7 @@
 		 *	@param none
 		 *	@return array
 		 */
-		public static function _hubspot_get_forms () {
+		private static function _hubspot_get_forms () {
 
 			$forms_api = self::getHubSpotFormsInstance();
 
@@ -756,7 +767,6 @@
 		private static function _hubspot_status ( $echo=TRUE ) {
 			// Show message if we're missing HubSpot credentials
 			$setting_portal_id = self::getPortalID();
-			$setting_app_domain = self::getAppDomain();
 			$setting_api_key = self::getAPIKey();
 
 			$validation_status = self::getValidationStatus();
@@ -804,7 +814,7 @@
 			}
 
 			if ( !self::_gravityforms_valid_version() ) {
-				$message .= '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - A minimum version of '.BSD_GF_HUBSPOT_MIN_GFVERSION.' of Gravity Forms is required to run the HubSpot Addon. Please upgrade Gravity Forms.</p>';
+				$message .= '<p><strong>'.BSD_GF_HUBSPOT_PLUGIN_NAME.'</strong> - A minimum version of '.BSD_GF_HUBSPOT_MIN_GFVERSION.' of Gravity Forms is required to run the HubSpot Addon. Please update Gravity Forms.</p>';
 			}
 
 			if ( $message != '' ) {
@@ -817,14 +827,14 @@
 
 
 		/**
-		 *	_gravityforms_add_submenus ()
+		 *	gravityforms_add_submenus ()
 		 *	
 		 *		Adds any submenus
 		 *
 		 *	@param array $menus
 		 *	@return array
 		 */
-		public static function _gravityforms_add_submenus ( $menus ) {
+		public static function gravityforms_add_submenus ( $menus ) {
 
 			$menus[] = array (
 				"name" => "bsdgfhubspot_forms", 

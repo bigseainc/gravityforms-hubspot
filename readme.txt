@@ -8,11 +8,15 @@ Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API
+Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
 
 == Description ==
 
-This Gravity Forms add-on sends entry submission data to the HubSpot Customer Forms API. Requires a HubSpot account with API/oAuth access. Plugin is in active development by the Big Sea team.
+If you’ve got a WordPress site that uses Gravity Forms, you’ve probably already spent time designing them to match your site and function the way you need - responsive, beautiful forms.  Now, you or your client wants to integrate HubSpot and you need a way to get those contacts into your lead management funnel - well here’s your solution!
+
+* Authenticate using oAuth or add your HubSpot API credentials
+* Create a form in HubSpot with fields that match all (or any part) of your fields in Gravity Forms
+* Profit! 
 
 == Installation ==
 

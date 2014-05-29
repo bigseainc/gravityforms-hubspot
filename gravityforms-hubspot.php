@@ -3,7 +3,7 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 1.0
+		Version: 1.1
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/
@@ -15,7 +15,7 @@
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'Better HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '1.0');
+	define('BSD_GF_HUBSPOT_VERSION', '1.1');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
 	define('BSD_GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
@@ -25,11 +25,13 @@
 	// Important Files
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/base.php');
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/admin.php');
+	require_once ( BSD_GF_HUBSPOT_PATH . 'library/bigsea.php');
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/hubspot/class.forms.php');
 
 	// Hooks to Startup Plugin
 	add_action ( 'init',  array ( 'bsdGFHubspot', 'initalize') );
 	register_activation_hook( __FILE__, array('bsdGFHubspot', 'activate') );
+	register_deactivation_hook( __FILE__, array('bsdGFHubspot', 'deactivate') );
 
 	class bsdGFHubspot extends bsdGFHubspotBase {
 
@@ -103,6 +105,7 @@
 		 *	@param array $form
 		 */
 		public static function gravityforms_submission ( $entry, $form ) {
+			$tracking = new BSDTracking ();
 
 			if ( !self::getValidationStatus() ) {
 				// Nothing to do here. No valid Hubspot credentials.
@@ -117,7 +120,7 @@
 			$forms_api = self::getHubSpotFormsInstance();
 
 			if ( !$forms_api ) {
-				// @todo write to error log as to what the hell went wrong
+				// @todo Error Message
 				return;
 			} 
 
@@ -148,9 +151,16 @@
 
 				// Try to send the form.
 				$result = $forms_api->submit_form(self::getPortalID(), $connection->hubspot_id, $form_fields, $hs_context);
+				$tracking->trigger('entry_submitted', $data);
+
+				$data = array (
+					'hubspot_id'		=> $connection->hubspot_id,
+					'entry_data' 		=> $form_fields,
+					'local_context'	=> $hs_context,
+				);
 
 				if ( !$result ) {
-					// @todo write to an error log.
+					// @todo Error Log, or no?
 				}
 
 			endforeach;
@@ -194,6 +204,14 @@
 
 			// Update our tracking variable to this version
 			update_option('gf_bsdhubspot_plugin_version', BSD_GF_HUBSPOT_VERSION);
+
+			$tracking = new BSDTracking ();
+			$tracking->trigger('activated_plugin');
 		} // function
+
+		public static function deactivate () {
+			$tracking = new BSDTracking ();
+			$tracking->trigger('deactivated_plugin');
+		}
 
 	} // class

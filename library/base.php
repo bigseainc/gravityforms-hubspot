@@ -94,6 +94,13 @@
 			// Let's find out what mode we're in.
 			$connection_type = self::getConnectionType();
 
+			$last_tracked_update = get_option('gf_bsdhubspot_last_track');
+			if ( !$last_tracked_update || $last_tracked_update <= strtotime('24 hours ago') ) {
+				$tracking = new BSDTracking ();
+				$tracking->trigger('forms_requested');
+				update_option('gf_bsdhubspot_last_track', time());
+			}
+
 			if ( $connection_type == 'oauth' ) {
 				// return oAUTH version.
 				return new HubSpot_Forms(self::getOAuthToken(), BSD_HUBSPOT_CLIENT_ID);

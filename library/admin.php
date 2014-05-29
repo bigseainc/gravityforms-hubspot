@@ -275,7 +275,6 @@
 		public static function html_connections_make () {
 
 			$error = FALSE;
-			$forms_api = self::getHubSpotFormsInstance();
 			$connection_id = FALSE;
 
 			if ( !self::getValidationStatus() ) {
@@ -285,7 +284,6 @@
 			}
 			elseif ( isset($_GET['connection_id']) ) {
 				// let's get the Connection data via the Database
-				// @todo
 				$connection_id = $_GET['connection_id'];
 
 				$connection = self::getConnections($connection_id);
@@ -318,6 +316,8 @@
 				self::html_connections_list();
 				return;
 			}
+
+			$forms_api = self::getHubSpotFormsInstance();
 
 			if ( isset ($_POST['gf_bsdhubspot_connections']) ) {
 				// We have a submission with the connection form fields. Let's try to process that.
@@ -601,6 +601,8 @@
 		 */
 		private static function _save_settings ( $echo=TRUE ) {
 
+			$tracking = new BSDTracking ();
+
 			if ( isset($_POST['gf_bsdhubspot_update']) ) {
 				check_admin_referer("update", "gf_bsdhubspot_update");
 				$setting_portal_id = stripslashes($_POST["gf_bsdhubspot_portal_id"]);
@@ -629,6 +631,7 @@
 							if ( $api_check === TRUE ) {
 								$data_validated = TRUE;
 								self::setValidationStatus("yes");
+								$tracking->trigger('validated_oauth');
 							}
 						}
 						else {
@@ -642,6 +645,7 @@
 						// if it's validated, let's mark it as such
 						$data_validated = TRUE;
 						self::setValidationStatus("yes");
+						$tracking->trigger('validated_apikey');
 					}
 					else {
 						if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
@@ -723,11 +727,16 @@
 		 *	@param boolean $user_oauth
 		 *	@return bool|string
 		 */
-		private static function _hubspot_validate_credentials ( $key, $use_oauth=FALSE ) {
+		private static function _hubspot_validate_credentials ( $key, $use_oauth=FALSE, $track_attempt=FALSE ) {
+
 			$forms_api = new HubSpot_Forms($key, $use_oauth);
 
 			$forms = $forms_api->get_forms();
 			if ( isset($forms->status) && $forms->status == 'error' ) {
+				if ( $track_attempt ) {
+					// @todo Error Message?
+				}
+
 				return $forms->message;
 			}
 

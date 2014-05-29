@@ -45,6 +45,13 @@
 		 */
 		public static function initalize () {
 
+			// Revalidate the HubSpot Creds every 6 hours
+			$last_validated = get_option('gf_bsdhubspot_last_validated');
+			if ( !$last_validated || $last_validated <= strtotime('6 hours ago') ) {
+				self::_hubspot_validate_credentials();
+				update_option('gf_bsdhubspot_last_validated', time());
+			}
+
 			if ( is_admin () ) {
 				bsdGFHubspotAdmin::startup();
 			}

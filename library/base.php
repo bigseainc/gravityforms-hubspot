@@ -242,6 +242,75 @@
 				return FALSE;
 			}
 		} // function
+
+		/**
+		 *	_hubspot_attempt_connection ()
+		 *
+		 *	@param string $key
+		 *	@param boolean $user_oauth
+		 *	@return bool|string
+		 */
+		protected static function _hubspot_attempt_connection ( $key, $use_oauth=FALSE ) {
+
+			$forms_api = new HubSpot_Forms($key, $use_oauth);
+
+			$forms = $forms_api->get_forms();
+			if ( isset($forms->status) && $forms->status == 'error' ) {
+				return $forms->message;
+			}
+
+			return TRUE;
+		} // function
+
+		protected static function _hubspot_validate_credentials ( $echo=FALSE, $setting_connection_type=FALSE, $setting_portal_id=FALSE ) {
+			if ( !$setting_connection_type ) {
+				$setting_connection_type = self::getConnectionType();
+				$setting_portal_id = self::getPortalID();
+			}
+
+			$data_validated = TRUE;
+			$tracking = new BSDTracking();
+
+			if ( $setting_connection_type == 'oauth' ) {
+					// Portal ID is required for oAuth, so, if one wasn't set, let's show message.
+					if ( $setting_portal_id == '' ) {
+						if ( $echo ) echo '<div class="error fade"><p>Portal ID is required for oAuth.</p></div>';
+					}
+					else {
+						// Validate the oAUTH, folk.
+						$oauth_token = self::getOAuthToken();
+						if ( $oauth_token && $oauth_token != '' ) {
+							$api_check = self::_hubspot_attempt_connection($oauth_token, BSD_GF_HUBSPOT_CLIENT_ID);
+							if ( $api_check === TRUE ) {
+								$data_validated = TRUE;
+								self::setValidationStatus("yes");
+								$tracking->trigger('validated_oauth');
+							}
+						}
+						else {
+							if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+						}
+					}
+				}
+				elseif ( $setting_connection_type == 'apikey' ) {
+					$api_check = self::_hubspot_attempt_connection($setting_api_key);
+					if ( $api_check === TRUE ) {
+						// if it's validated, let's mark it as such
+						$data_validated = TRUE;
+						self::setValidationStatus("yes");
+						$tracking->trigger('validated_apikey');
+					}
+					else {
+						if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+					}
+				}
+
+				if ( !$data_validated ) {
+					self::setValidationStatus("no");
+				}
+				return $data_validated;
+		} // function
+
 	} // class
 
 

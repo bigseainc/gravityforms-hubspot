@@ -268,7 +268,7 @@
 				$setting_portal_id = self::getPortalID();
 			}
 
-			$data_validated = TRUE;
+			$data_validated = FALSE;
 			$tracking = new BSDTracking();
 
 			if ( $setting_connection_type == 'oauth' ) {

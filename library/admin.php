@@ -184,9 +184,13 @@
 									<th scope="row"><label for="gf_bsdhubspot_oauth_key">Authenticate with HubSpot</label></th>
 									<td>
 										<?php if ( $authorize_url ) : ?>
-											<a class="button" href="<?php echo $authorize_url; ?>">Click Here to Authenticate</a>
-											<?php if ( $validated ) : ?>
-												<p class="description small">You are currently authenticated with HubSpot <i class="fa fa-check gf_keystatus_valid"></i></p>
+											<?php if ( $setting_connection_type == 'oauth' ) : ?>
+												<a class="button" href="<?php echo $authorize_url; ?>">Click Here to Authenticate</a>
+												<?php if ( $validated ) : ?>
+													<p class="description small">You are currently authenticated with HubSpot <i class="fa fa-check gf_keystatus_valid"></i></p>
+												<?php endif; ?>
+											<?php else: ?>
+												<p class="error">Click Save before continuing with oAuth Validation.</p>
 											<?php endif; ?>
 										<?php else : ?>
 											<p class="error">Requires the Hub ID first. Enter your Hub ID above and click save.</p>

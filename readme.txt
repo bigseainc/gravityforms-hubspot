@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,10 @@ After logging into your account on HubSpot.com, your Hub ID can be found with th
 
 Fill out the form on the following link, and click "Get My API Key": https://app.hubspot.com/keys/get -- You will receive an email containing your API Key, once approved.
 
+= Why do I keep losing my oAuth connection? =
+
+HubSpot's oAuth API requires a new token roughly every 8 hours. If no one visits the website for more than an 8 hours period, this script can't get a newer token, and has to be re-validated. We are still working on a way to resolve this. However, at this point it will likely require a server CRON being set up.
+
 **We highly recommend you use oAuth: it's more secure, and you can safely (and easily) revoke access at any time through HubSpot.**
 
 == Screenshots ==
@@ -52,6 +56,10 @@ Fill out the form on the following link, and click "Get My API Key": https://app
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.1 =
+* Fixed issue that prevented users from creating new Connections.
+* Added some behind the scenes logging for HubSpot to know how many active users we have using this plugin. Privacy Policy to come.
 
 = 1.0 =
 * Tightened up code to release it as version 1.0
@@ -77,6 +85,9 @@ Fill out the form on the following link, and click "Get My API Key": https://app
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 1.1 =
+Vital change. Fixes the ability to create new connections.
 
 = 0.7 =
 Introduces oAuth. Highly recommend switching to oAuth (preferred by HubSpot)

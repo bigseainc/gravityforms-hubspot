@@ -521,7 +521,7 @@
 			$hs_forms = self::_hubspot_get_forms();
 			$hs_form_count = count($hs_forms);
 			?>
-			<form method="post" action="<?php self::_get_connections_page_url('make_connection'); ?>">
+			<form method="post" action="<?php echo self::_get_connections_page_url('make_connection'); ?>">
 				<table>
 					<thead>
 						<tr>

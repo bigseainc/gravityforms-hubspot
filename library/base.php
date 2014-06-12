@@ -7,6 +7,10 @@
 		Shared functionality between the two files.
 	*/
 
+	if ( !class_exists('HubSpot_Exception') ) {
+		class HubSpot_Exception extends Exception {}
+	}
+
 	class bsdGFHubspotBase {
 
 		// Variables -- GET

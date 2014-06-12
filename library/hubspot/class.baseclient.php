@@ -16,6 +16,11 @@
 * language governing permissions and limitations under the
 * License.
 */
+
+if ( !class_exists('HubSpot_Exception') ) {
+    class HubSpot_Exception extends Exception {}
+}
+
 class HubSpot_BaseClient
 {
     // HubSpot_BaseClient class to be extended by specific hapi clients

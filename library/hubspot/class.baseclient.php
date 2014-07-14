@@ -79,11 +79,11 @@ class HubSpot_BaseClient
 
         $this->KEY = $key;
 
-        if ( !$userAgent ) {
+        if ( !$user_agent ) {
            $this->userAgent =  "haPiHP default UserAgent";
         }
         else {
-            $this->userAgent = $userAgent;
+            $this->userAgent = $user_agent;
         }
     } // function
 

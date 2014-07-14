@@ -288,7 +288,11 @@
 							}
 						}
 						else {
-							if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+							if ( $echo ) echo '
+								<div class="error fade">
+									<p>API Error: '.$api_check.'</p>
+									<p>oAuth API requires token renewal every ~8 hours. If you have already verified and you are seeing this, it is because your token has expired.</p>
+								</div>';
 						}
 					}
 				}

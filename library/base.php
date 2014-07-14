@@ -38,7 +38,7 @@
 					'access_token' => $new_token->access_token,
 					'refresh_token' => $new_token->refresh_token,
 					'hs_expires_in' => $new_token->expires_in,
-					'bsd_expires_in' => (time() + (int)$new_token->expires_in) - 1800 // Let's do this a half hour earlier than too late.
+					'bsd_expires_in' => (time() + (int)$new_token->expires_in) - 7200 // Let's do this a half hour earlier than too late.
 				);
 				self::setOAuthToken( $data );
 			} // endif

@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,11 @@ HubSpot's oAuth API requires a new token roughly every 8 hours. If no one visits
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.1.3 =
+* undefined variable issue found by kingchills, resolved.
+* clarified the oAuth token invalid warning for when it's encountered (due to the 8 hour limit that HubSpot implements)
+* decreased the amount of time between token renewals to try to not encounter that invalid token issue.
 
 = 1.1.2 =
 * HubSpot_Exception class missing. This fixes that. So weird, though, because not a single example of the HubSpot API class requires this class in their codes.

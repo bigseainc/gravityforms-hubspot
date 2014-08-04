@@ -296,7 +296,8 @@
 				if ( empty($_POST) ) {
 					foreach ( $connection->form_data['connections'] as $hs => $gf ) {
 						if ( !isset($_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$hs] ) ) {
-							$_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$hs] = $gf;
+							// @since 1.1.4 2014-08-04, adds check if this field is an array or not (allows for TYPES)
+							$_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$hs] = (is_array($gf) ? $gf['gf_field_name'] : $gf);
 						}
 					}
 				}
@@ -406,9 +407,10 @@
 					</thead>
 
 					<tbody>
+						<?php // @todo next version: <span class="small">HubSpot Field ($field->type)</span> ?>
 						<?php foreach ( $hubspot_fields as $field ) : $field_slug = BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name; ?>
 							<tr>
-								<td><label for="<?php echo $field_slug; ?>"><?php echo $field->label; ?><?php echo ( $field->required ? ' <span class="required">*</span>' : ''); ?></a></td>
+								<td><label for="<?php echo $field_slug; ?>"><?php echo $field->label; ?> <?php echo ( $field->required ? ' <span class="required">*</span>' : ''); ?></a></td>
 								<td>
 									<select name="<?php echo $field_slug; ?>">
 										<option value="">&nbsp;</option>

@@ -15,7 +15,7 @@
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'Better HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '1.1.3');
+	define('BSD_GF_HUBSPOT_VERSION', '1.1.4');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
 	define('BSD_GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
@@ -139,11 +139,19 @@
 
 				// Go through all of the fields, and get the form entry that relates to them.
 				$form_fields = array ();
+				
+				
 				foreach ( $hs_to_gf as $hs => $gf ) {
-					if ( isset($entry[$gf]) ) {
-						$form_fields[$hs] = $entry[$gf];
+					// @since 1.1.4 (2014-08-04), modified to support arrays stored in the field
+					if ( (is_array($gf) && isset($entry[$gf['gf_field_name']])) || isset($entry[$gf]) ) {
+						$form_fields[$hs] = self::_processFieldForHubSpot($entry, $gf);
 					}
 				}
+				//*
+				echo '<pre>';
+				var_dump ($form_fields);
+				echo '</pre>';
+				//*/
 
 				// Compile all of this data into what we need for the Form Submission
 				$hubspotutk = $_COOKIE['hubspotutk'];

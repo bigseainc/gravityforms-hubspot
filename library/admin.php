@@ -331,7 +331,16 @@
 					$gravity_form = RGFormsModel::get_form_meta($gravityform_id);
 					$hubspot_to_gf_connections = array ();
 					if ( is_array($hubspot_form->fields) ) : foreach ( $hubspot_form->fields as $field ) : 
-						$hubspot_to_gf_connections[$field->name] = $_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name];
+						if ( version_compare(BSD_GF_HUBSPOT_VERSION, '1.1.3', ">") ) { 
+							$hubspot_to_gf_connections[$field->name] = array(
+								'hs_field_type' => $field->type,
+								'gf_field_name' => $_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name]
+								);
+						}
+						else {
+							// Support for <= 1.1.3
+							$hubspot_to_gf_connections[$field->name] = $_POST[BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name];
+						}
 					endforeach; endif;
 
 					$data_to_save = array (
@@ -378,6 +387,7 @@
 
 			// and the Hubspot Form.
 			$hubspot_fields = $forms_api->get_form_fields($hubspot_id);
+
 			if ( !$hubspot_fields || count($hubspot_fields) == 0 ) {
 				echo '<div class="error fade"><p>HubSpot Form has no Fields. Please create some fields and try to make a Connection again.</p></div>';
 				self::_form_connection_make();

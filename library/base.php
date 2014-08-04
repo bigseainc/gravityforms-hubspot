@@ -143,6 +143,28 @@
 			return $output;
 		} // function
 
+		/**
+		 *	_processFieldForHubSpot
+		 *
+		 *		@since 1.1.4
+		 *		Introducing support for different HubSpot field types.
+		 *
+		 *	@param
+		 */
+		protected static function _processFieldForHubSpot($gf_data, $relationship) {
+			// redundant check in case we're still dealing with older data.
+			if ( !is_array($relationship) ) return $gf_data[$relationship];
+
+			$field_name = $relationship['gf_field_name'];
+			switch ( $relationship['hs_field_type'] ) {
+				case 'date' :
+					return strtotime($gf_data[$field_name]) * 1000;
+					break;
+				default :
+					return $gf_data[$field_name];
+			}
+		} // function
+
 
 		/**
 		 *	saveConnection ()

@@ -7,7 +7,7 @@
  */
 class BSDTracking {
 
-	private $URL = 'http://bigsea.local/gfhubspot-tracking.php';
+	private $URL = 'http://bigseadesign.com/gfhubspot-tracking.php';
 
 	function __construct () {
 		// Set up anything that's needed all the time

@@ -3,7 +3,7 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 1.1.3
+		Version: 1.1.4
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/

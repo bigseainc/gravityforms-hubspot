@@ -147,7 +147,7 @@
 						$form_fields[$hs] = self::_processFieldForHubSpot($entry, $gf);
 					}
 				}
-				//*
+				/*
 				echo '<pre>';
 				var_dump ($form_fields);
 				echo '</pre>';

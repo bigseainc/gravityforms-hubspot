@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.1.4
+Stable tag: 1.1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.1.4.1 =
+* OMG idiot. Left a var_dump out.... sorry folks.
 
 = 1.1.4 =
 * HubSpot "date" selector fields requires a unix timestamp in milliseconds. So, this begins the start of support for specialized field types from HubSpot.

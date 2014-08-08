@@ -21,6 +21,7 @@ if ( !class_exists('HubSpot_Exception') ) {
     class HubSpot_Exception extends Exception {}
 }
 
+if ( !class_exists('HubSpot_BaseClient') ) :
 class HubSpot_BaseClient
 {
     // HubSpot_BaseClient class to be extended by specific hapi clients
@@ -491,3 +492,4 @@ class HubSpot_BaseClient
         $this->lastStatus = (isset($info['http_code'])) ? $info['http_code'] : null;
     }
 }
+endif;

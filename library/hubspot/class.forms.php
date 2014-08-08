@@ -18,6 +18,7 @@
 */
 require_once('class.baseclient.php');
 
+if ( !class_exists('HubSpot_Forms') ) :
 class HubSpot_Forms extends HubSpot_Baseclient{
 
 	protected $API_PATH = 'contacts';
@@ -184,7 +185,7 @@ class HubSpot_Forms extends HubSpot_Baseclient{
 		}
 	}
 
-
 }
+endif;
 
 

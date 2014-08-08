@@ -18,6 +18,7 @@
 */
 require_once('class.baseclient.php');
 
+if ( !class_exists('HubSpot_Auth') ) :
 class HubSpot_Auth extends HubSpot_Baseclient{
 
 	protected $API_PATH = 'auth';
@@ -44,5 +45,6 @@ class HubSpot_Auth extends HubSpot_Baseclient{
     } // function
 
 } // class
+endif;
 
 

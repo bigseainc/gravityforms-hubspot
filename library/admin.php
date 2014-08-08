@@ -6,6 +6,7 @@
 		Admin Panel related functionality
 	*/
 
+	if ( !class_exists('bsdGFHubspotAdmin') ) :
 	class bsdGFHubspotAdmin extends bsdGFHubspotBase {
 
 		/**
@@ -811,7 +812,5 @@
 			return $menus;
 		} // function
 
-
 	} // class
-
-
+	endif;

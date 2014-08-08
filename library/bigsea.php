@@ -5,6 +5,8 @@
  *
  *			HubSpot requires us to track our users, so this helps us with this process.
  */
+
+if ( !class_exists('BSDTracking') ) :
 class BSDTracking {
 
 	private $URL = 'http://bigseadesign.com/gfhubspot-tracking.php';
@@ -85,3 +87,4 @@ class BSDTracking {
 	} // function
 
 } // class
+endif;

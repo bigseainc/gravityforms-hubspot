@@ -7,6 +7,7 @@
 		Shared functionality between the two files.
 	*/
 
+	if ( !class_exists('bsdGFHubspotBase') ) :
 	class bsdGFHubspotBase {
 
 		// Variables -- GET
@@ -338,5 +339,4 @@
 		} // function
 
 	} // class
-
-
+	endif;

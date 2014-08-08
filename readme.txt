@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.1.3
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,12 @@ HubSpot's oAuth API requires a new token roughly every 8 hours. If no one visits
 
 **We highly recommend you use oAuth: it's more secure, and you can safely (and easily) revoke access at any time through HubSpot.**
 
+= My "Date" field in HubSpot isn't getting the correct date? =
+
+This was due to HubSpot expecting a time in milliseconds, and not actually sending us a code saying that it failed for that reason. As such, we have added support for Field Types in v1.1.4 ... After updating, if you go edit your HubSpot Connections (via Forms > HubSpot), edit the existing one, and click "save" ... it will now support Date, and properly carry over.
+
+We currently only support "date" and "string" types from HubSpot, but we'll work on adding more in the future.
+
 == Screenshots ==
 
 1. The settings page
@@ -56,6 +62,16 @@ HubSpot's oAuth API requires a new token roughly every 8 hours. If no one visits
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.2 =
+* Still learning my versioning techniques. 1.1.4 should've probably have been 1.2, so this is making it as such.
+* Wrapped all of the classes with a if ( class_exists ), as redudancy (per robspurlock), just in case. 
+
+= 1.1.4.1 =
+* OMG idiot. Left a var_dump out.... sorry folks.
+
+= 1.1.4 =
+* HubSpot "date" selector fields requires a unix timestamp in milliseconds. So, this begins the start of support for specialized field types from HubSpot.
 
 = 1.1.3 =
 * undefined variable issue found by kingchills, resolved.
@@ -93,6 +109,12 @@ HubSpot's oAuth API requires a new token roughly every 8 hours. If no one visits
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 1.2 =
+Bug Fixes
+
+= 1.1.4 =
+The beginning of support for field types from HubSpot. "Date" and "String" field types only supported formats.
 
 = 1.1 =
 Vital change. Fixes the ability to create new connections.

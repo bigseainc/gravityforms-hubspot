@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 3.9
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,10 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 
 == Changelog ==
 
+= 1.3 =
+* API Key method for the Settings page now works 100% again.
+* Cleaned up code, bug fixes.
+
 = 1.2 =
 * Still learning my versioning techniques. 1.1.4 should've probably have been 1.2, so this is making it as such.
 * Wrapped all of the classes with a if ( class_exists ), as redudancy (per robspurlock), just in case. 
@@ -109,6 +113,9 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 1.3 =
+API Key method bug fixes
 
 = 1.2 =
 Bug Fixes

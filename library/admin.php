@@ -58,6 +58,7 @@
 					self::setValidationStatus("yes");
 				}
 				else {
+					echo 'function checkForOauthToken';
 					self::setValidationStatus("no");
 				}
 
@@ -137,8 +138,6 @@
 				$setting_connection_type = self::getConnectionType();
 				$setting_include_analytics = self::includeAnalyticsCode();
 			}
-
-			$oauth_token = self::getOAuthTokenArray();
 
 			// Check up on the validation status of the data provided.
 			$validated = self::getValidationStatus();
@@ -376,7 +375,6 @@
 				// Get all of these fields in an array (so we can properly tag the right ones as 'active')
 				foreach ( $gravity_form['fields'] as $field ) :
 					if ( is_array($field['inputs']) ) {
-						//echo '<pre>';var_dump ( $field );echo '</pre>';
 						foreach ( $field['inputs'] as $input ) {
 							$gravity_fields[(string)$input['id']] = $field['label'] . ' ('.$input['label'].')';
 						}
@@ -634,7 +632,7 @@
 				if ( $echo ) echo '<div class="updated fade"><p>Settings Saved Successfully</p></div>';
 
 				// Let's try validating the data.
-				$data_validated = self::_hubspot_validate_credentials($echo, $setting_connection_type, $setting_portal_id);
+				self::_hubspot_validate_credentials($echo, $setting_connection_type, $setting_portal_id);
 
 				return TRUE;
 			}
@@ -732,9 +730,6 @@
 		 */
 		private static function _hubspot_status ( $echo=TRUE ) {
 			// Show message if we're missing HubSpot credentials
-			$setting_portal_id = self::getPortalID();
-			$setting_api_key = self::getAPIKey();
-
 			$validation_status = self::getValidationStatus();
 			$connection_type = self::getConnectionType();
 			if ( !$validation_status && $connection_type == 'apikey' ) {

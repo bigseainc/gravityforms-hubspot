@@ -20,6 +20,9 @@
 			return $type;
 		} // function
 		public static function getOAuthTokenArray () {
+			$type = self::getConnectionType();
+			if ( $type != 'oauth' ) return FALSE;
+
 			$array = get_option("gf_bsdhubspot_oauth_token");
 			if ( !$array || !is_array($array) ) return FALSE;
 
@@ -320,7 +323,8 @@
 					}
 				}
 				elseif ( $setting_connection_type == 'apikey' ) {
-					$api_check = self::_hubspot_attempt_connection($setting_api_key);
+
+					$api_check = self::_hubspot_attempt_connection(self::getAPIKey());
 					if ( $api_check === TRUE ) {
 						// if it's validated, let's mark it as such
 						$data_validated = TRUE;

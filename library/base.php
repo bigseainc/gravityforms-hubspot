@@ -288,7 +288,8 @@
 			return TRUE;
 		} // function
 
-		protected static function _hubspot_validate_credentials ( $echo=FALSE, $setting_connection_type=FALSE, $setting_portal_id=FALSE ) {
+		public static function _hubspot_validate_credentials ( $echo=FALSE, $setting_connection_type=FALSE, $setting_portal_id=FALSE ) {
+			
 			if ( !$setting_connection_type ) {
 				$setting_connection_type = self::getConnectionType();
 				$setting_portal_id = self::getPortalID();

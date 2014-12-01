@@ -144,7 +144,13 @@
 				
 				foreach ( $hs_to_gf as $hs => $gf ) {
 					// @since 1.1.4 (2014-08-04), modified to support arrays stored in the field
-					if ( (is_array($gf) && isset($entry[$gf['gf_field_name']])) || isset($entry[$gf]) ) {
+					// @since 1.3.1 (2014-12-01) reworked to solve PHP warning.
+					if ( is_array( $gf ) ) {
+						if ( isset($gf['gf_field_name']) && isset($entry[$gf['gf_field_name']]) ) {
+							$form_fields[$hs] = self::_processFieldForHubSpot($entry, $gf);
+						}
+					}
+					elseif ( isset($entry[$gf] ) ) {
 						$form_fields[$hs] = self::_processFieldForHubSpot($entry, $gf);
 					}
 				}
@@ -162,7 +168,7 @@
 
 				// Try to send the form.
 				$result = $forms_api->submit_form(self::getPortalID(), $connection->hubspot_id, $form_fields, $hs_context);
-				$tracking->trigger('entry_submitted', $data);
+				$tracking->trigger('entry_submitted', $result);
 
 				$data = array (
 					'hubspot_id'		=> $connection->hubspot_id,

@@ -3,8 +3,8 @@ Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
-Tested up to: 3.9
-Stable tag: 1.3
+Tested up to: 4.1
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,7 +31,7 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 = Is my Hub ID required? =
 
-Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*HubSpot for Wordpress, their official app, already includes this*)
+Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot for Wordpress", their official plugin, already includes analytics*)
 
 *If you are going to connect via API Key, and not include the tracking script, we do not need your Hub ID.*
 
@@ -62,6 +62,10 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.3.1 =
+* Fix for a couple PHP warnings (https://wordpress.org/support/topic/debug-errors-8)
+* Includes CRON file for keeping oAuth API key up to date (requires server-side CRON configuration. BETA. USE AT OWN RISK)
 
 = 1.3 =
 * API Key method for the Settings page now works 100% again.
@@ -113,6 +117,9 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+PHP Warning fixes
 
 = 1.3 =
 API Key method bug fixes

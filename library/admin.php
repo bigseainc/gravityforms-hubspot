@@ -352,6 +352,8 @@
 
 					if ( !($connection_id = self::_saveConnection ( $gravityform_id, $hubspot_id, $data_to_save, $connection_id )) ) {
 						echo '<div class="error fade"><p>We could not save the Connection for an unknown reason. Please try again.</p></div>';
+						$tracking = new BSDTracking ();
+						$tracking->trigger('error_log', $result, 'Could not submit data to HubSpot');
 					}
 					else {
 						echo '<div class="updated fade"><p>Connection saved successfully!</p></div>';
@@ -374,7 +376,7 @@
 			else {
 				// Get all of these fields in an array (so we can properly tag the right ones as 'active')
 				foreach ( $gravity_form['fields'] as $field ) :
-					if ( is_array($field['inputs']) ) {
+					if ( $field['type'] != 'checkbox' && $field['type'] != 'radio' && is_array($field['inputs']) ) {
 						foreach ( $field['inputs'] as $input ) {
 							$gravity_fields[(string)$input['id']] = $field['label'] . ' ('.$input['label'].')';
 						}
@@ -406,7 +408,6 @@
 					</thead>
 
 					<tbody>
-						<?php // @todo next version: <span class="small">HubSpot Field ($field->type)</span> ?>
 						<?php foreach ( $hubspot_fields as $field ) : $field_slug = BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name; ?>
 							<tr>
 								<td><label for="<?php echo $field_slug; ?>"><?php echo $field->label; ?> <?php echo ( $field->required ? ' <span class="required">*</span>' : ''); ?></a></td>

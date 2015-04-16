@@ -3,8 +3,8 @@ Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
-Tested up to: 4.1
-Stable tag: 1.3.1
+Tested up to: 4.1.1
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,11 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 
 == Changelog ==
 
+= 1.4 =
+* Added error log tracking so we can watch errors and try to fix them early.
+* Added support for "Enumeration" fields from HubSpot. Multiple Checkboxes for a single field are now supported.
+* Related: ICONS for repo! woo.
+
 = 1.3.1 =
 * Fix for a couple PHP warnings (https://wordpress.org/support/topic/debug-errors-8)
 * Includes CRON file for keeping oAuth API key up to date (requires server-side CRON configuration. BETA. USE AT OWN RISK)
@@ -117,6 +122,9 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 1.4 =
+Enumeration fieldtype support
 
 = 1.3.1 =
 PHP Warning fixes

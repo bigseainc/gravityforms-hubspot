@@ -23,6 +23,8 @@ class BSDTracking {
 	 *		
 	 */
 	public function trigger ( $trigger, $data=FALSE, $message=FALSE ) {
+		if ( !BSD_GF_HUBSPOT_ALLOW_TRACKING ) return;
+
 		/*
 			$valid_triggers = array (
 					'entry_submitted',

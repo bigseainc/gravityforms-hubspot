@@ -164,6 +164,26 @@
 				case 'date' :
 					return strtotime($gf_data[$field_name]) * 1000;
 					break;
+				case 'enumeration' :
+					// We're expecting multiple pieces of data
+					if ( isset($gf_data[$field_name]) ) return $gf_data[$field_name]; // we didn't get that, but that's ok.
+
+					// Ok, so, let's return all of the results that we find for this field.
+					$count = 1;
+					$response = array();
+					$curr_field_name = $field_name . '.' . $count;
+					while ( isset($gf_data[$curr_field_name]) ) {
+						// Only add it if it isn't empty (so it's actually 'selected')
+						if (trim($gf_data[$curr_field_name]) != '') {
+							$response[] = $gf_data[$curr_field_name];
+						}
+
+						$count++;
+						$curr_field_name = $field_name . '.' . $count;
+					}
+
+					return implode(';', $response);
+					break;
 				default :
 					return $gf_data[$field_name];
 			}

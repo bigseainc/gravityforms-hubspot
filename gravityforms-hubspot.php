@@ -22,6 +22,10 @@
 	define('BSD_GF_HUBSPOT_TABLE', $wpdb->prefix . "rg_hubspot_connections");
 	define('BSD_GF_HUBSPOT_FORMFIELD_BASE', 'hsfield_');
 
+	// Ones that can be controlled by each individual site.
+	if ( !defined('BSD_GF_HUBSPOT_ALLOW_TRACKING') ) define('BSD_GF_HUBSPOT_ALLOW_TRACKING', FALSE);
+	if ( !defined('BSD_GF_HUBSPOT_DEBUG') ) define('BSD_GF_HUBSPOT_DEBUG', FALSE);
+
 	// Important Files
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/base.php');
 	require_once ( BSD_GF_HUBSPOT_PATH . 'library/admin.php');
@@ -128,9 +132,11 @@
 			$forms_api = self::getHubSpotFormsInstance();
 
 			if ( !$forms_api ) {
-				// @todo Error Message
+				$tracking->trigger('error_log', $forms_api, 'Could not connect to HubSpot API');
 				return;
-			} 
+			}
+
+			if ( BSD_GF_HUBSPOT_DEBUG ) echo '<pre>';
 
 			// Let's go through all of the connections we have for this form.
 			foreach ( $connections as $connection ) :
@@ -141,12 +147,13 @@
 				// Go through all of the fields, and get the form entry that relates to them.
 				$form_fields = array ();
 				
-				
 				foreach ( $hs_to_gf as $hs => $gf ) {
 					// @since 1.1.4 (2014-08-04), modified to support arrays stored in the field
 					// @since 1.3.1 (2014-12-01) reworked to solve PHP warning.
 					if ( is_array( $gf ) ) {
-						if ( isset($gf['gf_field_name']) && isset($entry[$gf['gf_field_name']]) ) {
+						if ( BSD_GF_HUBSPOT_DEBUG ) var_dump (isset($gf['gf_field_name']), $entry[$gf['gf_field_name']]);
+						if ( isset($gf['gf_field_name']) && (isset($entry[$gf['gf_field_name']]) || isset($entry[$gf['gf_field_name'].'.1']))) {
+							// Straight field to field grab
 							$form_fields[$hs] = self::_processFieldForHubSpot($entry, $gf);
 						}
 					}
@@ -166,6 +173,10 @@
 				);
 				$hs_context_json = json_encode($hs_context);
 
+				if ( BSD_GF_HUBSPOT_DEBUG ) var_dump (self::getPortalID(), $connection->hubspot_id, $form_fields, $hs_context);
+
+				if ( BSD_GF_HUBSPOT_DEBUG ) echo '</pre>';
+
 				// Try to send the form.
 				$result = $forms_api->submit_form(self::getPortalID(), $connection->hubspot_id, $form_fields, $hs_context);
 				$tracking->trigger('entry_submitted', $result);
@@ -177,7 +188,7 @@
 				);
 
 				if ( !$result ) {
-					// @todo Error Log, or no?
+					$tracking->trigger('error_log', $result, 'Could not submit data to HubSpot');
 				}
 
 			endforeach;
@@ -191,7 +202,7 @@
 		 *		Activate the plugin, installing any necessary functionality.
 		 *
 		 *	@param none
-		 *	@return none
+		 *	@return boolean
 		 */
 		public static function activate () {
 			$old_version = get_option('gf_bsdhubspot_plugin_version');

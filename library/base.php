@@ -28,23 +28,7 @@
 
 			// Let's make sure we don't need to refresh the token
 			if ( time() > $array['bsd_expires_in'] ) {
-				// We need to refresh the token. How?
-				require_once ( BSD_GF_HUBSPOT_PATH . 'library/hubspot/class.auth.php');
-				$api = new HubSpot_Auth(self::getAPIKey(), self::getPortalID());
-				$new_token = $api->refreshOAuthToken($array['refresh_token'], BSD_GF_HUBSPOT_CLIENT_ID);
-				if ( !isset( $new_token->access_token ) ) {
-					self::setValidationStatus("no");
-					return FALSE;
-				}
-
-				// Example: {"portal_id":xxx,"expires_in":28799,"refresh_token":"yyy","access_token":"zzz"}
-				$data = array (
-					'access_token' => $new_token->access_token,
-					'refresh_token' => $new_token->refresh_token,
-					'hs_expires_in' => $new_token->expires_in,
-					'bsd_expires_in' => (time() + (int)$new_token->expires_in) - 7200 // Let's do this a half hour earlier than too late.
-				);
-				self::setOAuthToken( $data );
+				self::refresh_oauth_token ($array['refresh_token'], FALSE);
 			} // endif
 
 			return $array;
@@ -112,6 +96,46 @@
 
 			// Return the API KEY version
 			return new HubSpot_Forms(self::getAPIKey());
+		} // function
+
+
+		/**
+		 *	refresh_oauth_token
+		 *
+		 *		Refreshes the oAuth token. Can do this REGARDLESS of validation steps. Meant for CRON only.
+		 *
+		 *	@since 1.5
+		 *	@param string $refresh_token
+		 *	@return none
+		 */
+		public static function refresh_oauth_token ( $refresh_token=FALSE ) {
+			$type = self::getConnectionType();
+			if ( $type != 'oauth' ) return FALSE;
+
+			if ( !$refresh_token ) {
+				//about to do a refresh anyways, in most cases of calling this, so let's prevent the refresh by default
+				$array = get_option("gf_bsdhubspot_oauth_token");
+				if ( !$array || !is_array($array) ) return FALSE;
+				$refresh_token = $array['refresh_token'];
+			}
+
+			// We need to refresh the token. How?
+			require_once ( BSD_GF_HUBSPOT_PATH . 'library/hubspot/class.auth.php');
+			$api = new HubSpot_Auth(self::getAPIKey(), self::getPortalID());
+			$new_token = $api->refreshOAuthToken($refresh_token, BSD_GF_HUBSPOT_CLIENT_ID);
+			if ( !isset( $new_token->access_token ) ) {
+				self::setValidationStatus("no");
+				return FALSE;
+			}
+
+			// Example: {"portal_id":xxx,"expires_in":28799,"refresh_token":"yyy","access_token":"zzz"}
+			$data = array (
+				'access_token' => $new_token->access_token,
+				'refresh_token' => $new_token->refresh_token,
+				'hs_expires_in' => $new_token->expires_in,
+				'bsd_expires_in' => (time() + (int)$new_token->expires_in) - 7200 // Let's do this a half hour earlier than too late.
+			);
+			self::setOAuthToken( $data );
 		} // function
 		
 
@@ -309,7 +333,7 @@
 		} // function
 
 		public static function _hubspot_validate_credentials ( $echo=FALSE, $setting_connection_type=FALSE, $setting_portal_id=FALSE ) {
-			
+
 			if ( !$setting_connection_type ) {
 				$setting_connection_type = self::getConnectionType();
 				$setting_portal_id = self::getPortalID();
@@ -319,48 +343,49 @@
 			$tracking = new BSDTracking();
 
 			if ( $setting_connection_type == 'oauth' ) {
-					// Portal ID is required for oAuth, so, if one wasn't set, let's show message.
-					if ( $setting_portal_id == '' ) {
-						if ( $echo ) echo '<div class="error fade"><p>Portal ID is required for oAuth.</p></div>';
-					}
-					else {
-						// Validate the oAUTH, folk.
-						$oauth_token = self::getOAuthToken();
-						if ( $oauth_token && $oauth_token != '' ) {
-							$api_check = self::_hubspot_attempt_connection($oauth_token, BSD_GF_HUBSPOT_CLIENT_ID);
-							if ( $api_check === TRUE ) {
-								$data_validated = TRUE;
-								self::setValidationStatus("yes");
-								$tracking->trigger('validated_oauth');
-							}
-						}
-						else {
-							if ( $echo ) echo '
-								<div class="error fade">
-									<p>API Error: '.$api_check.'</p>
-									<p>oAuth API requires token renewal every ~8 hours. If you have already verified and you are seeing this, it is because your token has expired.</p>
-								</div>';
+
+				// Portal ID is required for oAuth, so, if one wasn't set, let's show message.
+				if ( $setting_portal_id == '' ) {
+					if ( $echo ) echo '<div class="error fade"><p>Portal ID is required for oAuth.</p></div>';
+				}
+				else {
+					// Validate the oAUTH, folk.
+					$oauth_token = self::getOAuthToken();
+					if ( $oauth_token && $oauth_token != '' ) {
+						$api_check = self::_hubspot_attempt_connection($oauth_token, BSD_GF_HUBSPOT_CLIENT_ID);
+						if ( $api_check === TRUE ) {
+							$data_validated = TRUE;
+							self::setValidationStatus("yes");
+							$tracking->trigger('validated_oauth');
 						}
 					}
-				}
-				elseif ( $setting_connection_type == 'apikey' ) {
-
-					$api_check = self::_hubspot_attempt_connection(self::getAPIKey());
-					if ( $api_check === TRUE ) {
-						// if it's validated, let's mark it as such
-						$data_validated = TRUE;
-						self::setValidationStatus("yes");
-						$tracking->trigger('validated_apikey');
-					}
 					else {
-						if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+						if ( $echo ) echo '
+							<div class="error fade">
+								<p>API Error: '.$api_check.'</p>
+								<p>oAuth API requires token renewal every ~8 hours. If you have already verified and you are seeing this, it is because your token has expired.</p>
+							</div>';
 					}
 				}
+			}
+			elseif ( $setting_connection_type == 'apikey' ) {
 
-				if ( !$data_validated ) {
-					self::setValidationStatus("no");
+				$api_check = self::_hubspot_attempt_connection(self::getAPIKey());
+				if ( $api_check === TRUE ) {
+					// if it's validated, let's mark it as such
+					$data_validated = TRUE;
+					self::setValidationStatus("yes");
+					$tracking->trigger('validated_apikey');
 				}
-				return $data_validated;
+				else {
+					if ( $echo ) echo '<div class="error fade"><p>API Error: '.$api_check.'</p></div>';
+				}
+			}
+
+			if ( !$data_validated ) {
+				self::setValidationStatus("no");
+			}
+			return $data_validated;
 		} // function
 
 	} // class

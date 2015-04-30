@@ -16,10 +16,17 @@
 
 	$path = dirname( __FILE__ );
 	// echo $path;
+	echo '<pre>';
+	var_dump( 'Running Script');
+	var_dump ( $path );
 
 	require_once( dirname( dirname( dirname( dirname( $path ) ) ) ) . '/wp-load.php' );
 
+	var_dump( 'OK YAY. Call the function');
+
 	// Probably redundant, but hey, I want to make sure this runs :)
 	// Our internal Wordpress-powered CRON runs every 6 hours, IF a user visits. This one runs every time the CRON runs, regardless of users visiting.
-	bsdGFHubspot::_hubspot_validate_credentials();
-?>
+	bsdGFHubspot::refresh_oauth_token();
+	update_option('gf_bsdhubspot_last_validated', time());
+
+	echo '</pre>';

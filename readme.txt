@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.5 =
+* Server Side CRON script works. Follow instructions in library/cron.php if you want to set this up for oAuth.
 
 = 1.4 =
 * Added error log tracking so we can watch errors and try to fix them early.

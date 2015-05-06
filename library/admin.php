@@ -58,7 +58,6 @@
 					self::setValidationStatus("yes");
 				}
 				else {
-					echo 'function checkForOauthToken';
 					self::setValidationStatus("no");
 				}
 
@@ -239,7 +238,7 @@
 							
 							echo '<h2><span>HubSpot > Gravity Forms</span></h2>';
 
-							if ( $_GET['sub'] == 'delete_connection' ) {
+							if ( !isset($_GET['sub']) && $_GET['sub'] == 'delete_connection' ) {
 								if ( self::_deleteConnection($_GET['connection_id'])) {
 									echo '<div class="updated fade"><p>Connection deleted successfully!</p></div>';
 								}
@@ -410,7 +409,7 @@
 					<tbody>
 						<?php foreach ( $hubspot_fields as $field ) : $field_slug = BSD_GF_HUBSPOT_FORMFIELD_BASE.$field->name; ?>
 							<tr>
-								<td><label for="<?php echo $field_slug; ?>"><?php echo $field->label; ?> <?php echo ( $field->required ? ' <span class="required">*</span>' : ''); ?></a></td>
+								<td><label for="<?php echo $field_slug; ?>"><?php echo $field->label; ?> <?php echo ( $field->required ? ' <span class="required">*</span>' : ''); ?></td>
 								<td>
 									<select name="<?php echo $field_slug; ?>">
 										<option value="">&nbsp;</option>

@@ -156,7 +156,12 @@
 			}
 			$sql .= " ORDER BY `id` desc";
 
-			$results = $wpdb->get_results($wpdb->prepare($sql, $id));
+			if ($id) {
+				$results = $wpdb->get_results($wpdb->prepare($sql, $id));
+			} 
+			else {
+				$results = $wpdb->get_results($sql);
+			}
 
 			if ( !is_array($results) || count($results) == 0 ) {
 				return FALSE;

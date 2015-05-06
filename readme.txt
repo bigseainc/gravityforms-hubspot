@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.5
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,21 +63,27 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 
 == Changelog ==
 
+= 1.5.1 =
+* [FIX] $wpdb->prepare instance where $id isn't set
+* [FIX] extra check for $_GET['sub'] in the admin panel.
+
+Thanks to Wordpress.org user "anu" for finding and debugging these issues. (https://wordpress.org/support/topic/php-warnings-patch-attached)
+
 = 1.5 =
-* Server Side CRON script works. Follow instructions in library/cron.php if you want to set this up for oAuth.
+* [NEW] Server Side CRON script works. Follow instructions in library/cron.php if you want to set this up for oAuth.
 
 = 1.4 =
-* Added error log tracking so we can watch errors and try to fix them early.
-* Added support for "Enumeration" fields from HubSpot. Multiple Checkboxes for a single field are now supported.
-* Related: ICONS for repo! woo.
+* [NEW] Added error log tracking so we can watch errors and try to fix them early.
+* [NEW] Added support for "Enumeration" fields from HubSpot. Multiple Checkboxes for a single field are now supported.
+* [OTHER] Related: ICONS for repo! woo.
 
 = 1.3.1 =
-* Fix for a couple PHP warnings (https://wordpress.org/support/topic/debug-errors-8)
-* Includes CRON file for keeping oAuth API key up to date (requires server-side CRON configuration. BETA. USE AT OWN RISK)
+* [FIX] PHP warnings (https://wordpress.org/support/topic/debug-errors-8)
+* [BETA] Includes CRON file for keeping oAuth API key up to date (requires server-side CRON configuration. BETA. USE AT OWN RISK)
 
 = 1.3 =
-* API Key method for the Settings page now works 100% again.
-* Cleaned up code, bug fixes.
+* [FIX] API Key method for the Settings page now works 100% again.
+* [FIX] Cleaned up code, bug fixes.
 
 = 1.2 =
 * Still learning my versioning techniques. 1.1.4 should've probably have been 1.2, so this is making it as such.

@@ -66,18 +66,19 @@
 				return;
 			}
 
+			var_dump ( wp_next_scheduled( 'bsd_gfhs_oauth_cron' )  );
+
 			// Set up the CRON if the user is choosing oauth renewal
-			add_action( 'gf_bsdhubspot_cron', array("bsdGFHubSpot", "cron_oauth") );
+			add_action( 'bsd_gfhs_oauth_cron', array("bsdGFHubSpot", "cron_oauth") );
 			add_filter( 'cron_schedules', array("bsdGFHubspot", "crons_add_schedule") );
 			if ( self::getConnectionType() == 'oauth' ) {
 				if ( ! wp_next_scheduled( 'bsd_gfhs_oauth_cron' ) ) {
-					wp_schedule_event( time(), 'fourhours', 'gf_bsdhubspot_cron' );
+					wp_schedule_event( time(), 'fourhours', 'bsd_gfhs_oauth_cron' );
 				}
 			}
 			else {
 				// Get the timestamp for the next event.
-				$timestamp = wp_next_scheduled( 'bsd_gfhs_oauth_cron' );
-				wp_unschedule_event( $timestamp, 'bsd_gfhs_oauth_cron' );
+				wp_clear_scheduled_hook( 'bsd_gfhs_oauth_cron' );
 			}
 
 			// If we're visiting the front end of the site, and we have valid HubSpot credentials to work with... Let's move forward.
@@ -94,11 +95,10 @@
  
 		public static function crons_add_schedule ( $schedules ) {
 			// Adds once weekly to the existing schedules.
-			/*$schedules['fourhours'] = array(
+			$schedules['fourhours'] = array(
 				'interval' => 14400,
 				'display' => __( 'Every 4 Hours' )
-			);*/
-			var_dump ( $schedules );
+			);
 			return $schedules;
 		}
 
@@ -279,6 +279,7 @@
 		public static function deactivate () {
 			$tracking = new BSDTracking ();
 			$tracking->trigger('deactivated_plugin');
+			wp_clear_scheduled_hook( 'bsd_gfhs_oauth_cron' );
 		}
 
 	} // class

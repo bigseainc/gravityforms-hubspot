@@ -27,9 +27,11 @@
 			if ( !$array || !is_array($array) ) return FALSE;
 
 			// Let's make sure we don't need to refresh the token
-			if ( time() > $array['bsd_expires_in'] ) {
+			/*if ( time() > $array['bsd_expires_in'] ) {
+				// Extra Redundant, if the WP Cron isn't running right... might delete
+				// @todo delete this?
 				self::refresh_oauth_token ($array['refresh_token'], FALSE);
-			} // endif
+			} // endif */
 
 			return $array;
 		} // function

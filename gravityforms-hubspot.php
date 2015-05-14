@@ -3,7 +3,7 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 1.5.1
+		Version: 1.6
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/
@@ -15,7 +15,7 @@
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'Better HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '1.5.1');
+	define('BSD_GF_HUBSPOT_VERSION', '1.6');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
 	define('BSD_GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
@@ -66,6 +66,20 @@
 				return;
 			}
 
+			// Set up the CRON if the user is choosing oauth renewal
+			add_action( 'gf_bsdhubspot_cron', array("bsdGFHubSpot", "cron_oauth") );
+			add_filter( 'cron_schedules', array("bsdGFHubspot", "crons_add_schedule") );
+			if ( self::getConnectionType() == 'oauth' ) {
+				if ( ! wp_next_scheduled( 'bsd_gfhs_oauth_cron' ) ) {
+					wp_schedule_event( time(), 'fourhours', 'gf_bsdhubspot_cron' );
+				}
+			}
+			else {
+				// Get the timestamp for the next event.
+				$timestamp = wp_next_scheduled( 'bsd_gfhs_oauth_cron' );
+				wp_unschedule_event( $timestamp, 'bsd_gfhs_oauth_cron' );
+			}
+
 			// If we're visiting the front end of the site, and we have valid HubSpot credentials to work with... Let's move forward.
 			if ( !is_admin() && self::getValidationStatus() ) {
 				// If the user wanted analytics, let's load that up.
@@ -76,6 +90,31 @@
 				add_action("gform_after_submission", array("bsdGFHubspot", "gravityforms_submission"), 10, 2);
 			}
 
+		} // function
+ 
+		public static function crons_add_schedule ( $schedules ) {
+			// Adds once weekly to the existing schedules.
+			/*$schedules['fourhours'] = array(
+				'interval' => 14400,
+				'display' => __( 'Every 4 Hours' )
+			);*/
+			var_dump ( $schedules );
+			return $schedules;
+		}
+
+
+		/**
+		 * cron_oauth ()
+		 *
+		 *		Actually setting up WP Cron... good lord am I an idiot sometimes.
+		 *
+		 *	@param none
+		 *	@return none
+		 *	@since 1.6
+		 */
+		public static function cron_oauth () {
+			bsdGFHubspot::refresh_oauth_token();
+			update_option('gf_bsdhubspot_last_validated', time());
 		} // function
 
 

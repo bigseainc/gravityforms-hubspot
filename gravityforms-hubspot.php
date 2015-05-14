@@ -3,7 +3,7 @@
 		Plugin Name: Better Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 1.6
+		Version: 1.6.1
 		Author: Big Sea
 		Author URI: http://bigseadesign.com
 	*/
@@ -15,7 +15,7 @@
 	define('BSD_GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
 	define('BSD_GF_HUBSPOT_URL', plugins_url(basename(dirname(__FILE__))) . "/");
 	define('BSD_GF_HUBSPOT_PLUGIN_NAME', 'Better HubSpot for Gravity Forms');
-	define('BSD_GF_HUBSPOT_VERSION', '1.6');
+	define('BSD_GF_HUBSPOT_VERSION', '1.6.1');
 	define('BSD_GF_HUBSPOT_MIN_GFVERSION', "1.6");
 	define('BSD_GF_HUBSPOT_MIN_WPVERSION', "3.7");
 	define('BSD_GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
@@ -65,8 +65,6 @@
 			if(!self::_gravityforms_valid_version()){
 				return;
 			}
-
-			var_dump ( wp_next_scheduled( 'bsd_gfhs_oauth_cron' )  );
 
 			// Set up the CRON if the user is choosing oauth renewal
 			add_action( 'bsd_gfhs_oauth_cron', array("bsdGFHubSpot", "cron_oauth") );

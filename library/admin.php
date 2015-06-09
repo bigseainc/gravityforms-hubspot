@@ -196,6 +196,19 @@
 										<?php endif; ?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">&nbsp;</th>
+									<td>
+										<?php
+										$wp_cron = wp_next_scheduled( 'bsd_gfhs_oauth_cron' );
+										if ( $wp_cron ) {
+											echo '<p>The next scheduled cron will occur ' . date('M d, Y \a\t g:ia', $wp_cron) . '</p>';
+											echo '<p>WP Cron requires user visits. This script will not run at exactly at the above time, but after this time when a user visits the website.</p>';
+											echo '<p>oAuth requires authentication every 8 hours. A server cron is recommended to supplement this.</p>';
+										}
+										?>
+									</td>
+								</tr>
 								<tr class="connection_type_section connect_via_apikey">
 									<th scope="row"><label for="gf_bsdhubspot_api_key">HubSpot API Key</label></th>
 									<td>
@@ -238,7 +251,7 @@
 							
 							echo '<h2><span>HubSpot > Gravity Forms</span></h2>';
 
-							if ( !isset($_GET['sub']) && $_GET['sub'] == 'delete_connection' ) {
+							if ( isset($_GET['sub']) && $_GET['sub'] == 'delete_connection' ) {
 								if ( self::_deleteConnection($_GET['connection_id'])) {
 									echo '<div class="updated fade"><p>Connection deleted successfully!</p></div>';
 								}

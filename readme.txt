@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 3. An example of the "Connection" Page between Gravity Forms and HubSpot
 
 == Changelog ==
+
+= 1.6.2 =
+* [FIX] Deleting connections now works again. Thanks to 'samureyed' for discovering this bug.
 
 = 1.6 =
 * [UPDATE] If user selects 'oAuth', WP Cron is scheduled. Otherwise, API Token is ok.
@@ -134,6 +137,9 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 1.6.2 =
+Fixes ability to delete connections.
 
 = 1.4 =
 Enumeration fieldtype support

@@ -121,6 +121,7 @@
          *      If token isn't included, let's check the one that's already stored.
          */
         public function authenticate( $type=false, $token=false ) {
+
             // No type provided, then we must have it stored.
             if ( !$type ) {
                 $type = $this->bsd_get('connection_type');

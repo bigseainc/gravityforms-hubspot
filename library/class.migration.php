@@ -58,6 +58,17 @@ class GF_Hubspot_Migration {
             ';
         });
         delete_transient('gf_hubspot_needs_migration');
+
+        // Delete all of the older stuff.
+        delete_option('gf_bsdhubspot_portal_id');
+        delete_option('gf_bsdhubspot_connection_type');
+        delete_option('gf_bsdhubspot_oauth_token');
+        delete_option('gf_bsdhubspot_api_key');
+        delete_option("gf_bsdhubspot_include_analytics");
+        
+        // Drop the table.
+        $sql = "DROP TABLE IF EXISTS ".self::$_v2_table_name."";
+        $wpdb->query( $sql );
     } // function
 
     public function pre_v2_connections () {

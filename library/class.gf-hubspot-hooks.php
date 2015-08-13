@@ -5,8 +5,8 @@ add_action('admin_init', array('GF_Hubspot_Hooks', 'check_for_oauth_response'));
 add_action('admin_notices', array('GF_Hubspot_Hooks', 'admin_notices'));
 
 if ( get_transient ('gf_hubspot_needs_migration') ) {
-    // var_dump ( 'when is this running?' );
-    add_action('plugins_loaded', array('GF_Hubspot_Hooks', 'migration_to_v2'));
+    require_once ( GF_HUBSPOT_PATH . 'library/class.migration.php' );
+    add_action('wp_loaded', array('GF_Hubspot_Migration', 'migrate_to_v2'));
 }
 
 // Filters
@@ -72,22 +72,6 @@ class GF_Hubspot_Hooks {
             <!-- End of Async HubSpot Analytics Code -->
             <?php
         endif;
-    } // function
-
-
-    public static function migration_to_v2 () {
-        GF_Hubspot_Tracking::log('Migration Assistance is running');
-
-        // Get the plugin instance
-
-        // Migrate the Settings
-
-        // Try to connect to HubSpot with the existing settings
-
-        // Foreach existing connection, migrate over.
-
-        // After this runs successfully
-        //delete_transient('gf_hubspot_needs_migration');
     } // function
 
 

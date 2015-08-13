@@ -13,10 +13,6 @@
     define('GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
     define('GF_HUBSPOT_VERSION', '2.0');
 
-    // Database Constants
-    define('GF_HUBSPOT_TABLE', $wpdb->prefix . "rg_hubspot_connections");
-    define('GF_HUBSPOT_FORMFIELD_BASE', 'hsfield_');
-
     // Start up the plugin after GravityForms is loaded.
     add_action( 'gform_loaded', array( 'GF_HubSpot_Bootstrap', 'load' ), 5 );
 

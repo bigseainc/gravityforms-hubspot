@@ -65,7 +65,10 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 
 = 2.0 =
 * [NEW] Reworked the whole plugin to use the GFAddon Framework
+* [NEW] Migration Assistant for moving from v1.6.2 to v2.0
 * [REMOVED] Cron! The oAuth handling is now how it should be, and cron script is no longer needed.
+
+** Removed support for less than v0.7 ... If you hadn't updated by now. I don't know what to tell you... **
 
 = 1.6.2 =
 * [FIX] Deleting connections now works again. Thanks to 'samureyed' for discovering this bug.

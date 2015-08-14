@@ -54,7 +54,10 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 
 == Screenshots ==
 
-new screenshots coming soon.
+1. The Location of your HubSpot settings on a per-form basis. It can be found by hovering over the "Settings" text, or clicking settings and then clicking "HubSpot"
+1. The Form's list of HubSpot Feeds
+1. A glimpse at the settings for the HubSpot Feed connectivity
+1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
 

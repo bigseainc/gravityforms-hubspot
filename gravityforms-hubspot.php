@@ -25,6 +25,7 @@
         public static function load(){
             // Let's get rolling!
             require_once( GF_HUBSPOT_PATH . 'library/startup.php' );
+            GF_Hubspot_Tracking::log('Plugin Booted Up');
             GFAddOn::register( 'GF_Hubspot' );
         } // function
 

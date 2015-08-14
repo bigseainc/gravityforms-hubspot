@@ -2,6 +2,7 @@
 
 // Actions
 add_action('admin_init', array('GF_Hubspot_Hooks', 'check_for_oauth_response'));
+add_action('admin_init', array('GF_Hubspot_Hooks', 'check_for_pre_v2_settings'));
 add_action('admin_notices', array('GF_Hubspot_Hooks', 'admin_notices'));
 
 if ( get_transient ('gf_hubspot_needs_migration') ) {
@@ -52,6 +53,33 @@ class GF_Hubspot_Hooks {
             return $gf_hubspot->authenticate('oauth', $_GET['access_token']);
 
         } // endif
+    } // function
+
+
+    public function check_for_pre_v2_settings () {
+        $ignore_notification_this_load = false;
+
+        // Check for Triggers and run them.
+        if ( isset($_GET['trigger']) && $_GET['trigger'] == 'gf_hubspot_migrate_v2' ) {
+            // Run v2's Upgrade Process
+            $ignore_notification_this_load = true;
+            set_transient('gf_hubspot_needs_migration', '0.9', 0);
+        }
+        if ( isset($_GET['trigger']) && $_GET['trigger'] == 'gf_hubspot_dismiss_v2_migration_message' ) {
+            // Ignore the upgrade message (booo!)
+            set_transient('gf_hubspot_dismiss_v2_migration_message', true);
+        }
+
+        if ( !$ignore_notification_this_load && get_option('gf_bsdhubspot_connection_type') && !get_transient('gf_hubspot_dismiss_v2_migration_message') ) {
+            add_action('admin_notices', function(){
+                $trigger_migration = get_admin_url(null, 'admin.php?page=gf_settings&subview=gravityforms-hubspot&trigger=gf_hubspot_migrate_v2');
+                $trigger_dismissal = get_admin_url(null, '?trigger=gf_hubspot_dismiss_v2_migration_message');
+                 echo '
+                    <div class="update-nag">
+                        <p>Your original HubSpot for Gravity Forms settings can be migrated to v2.x <a href="'.$trigger_migration.'">Click here</a> to migrate your settings. Or <a href="'.$trigger_dismissal.'">dismiss this message</a>.</p>
+                    </div>';
+            });
+        }
     } // function
 
 

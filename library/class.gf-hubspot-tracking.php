@@ -28,7 +28,7 @@ class GF_Hubspot_Tracking {
     private static function show () {
         if ( !GF_HUBSPOT_DEBUG_ECHO ) return;
 
-        var_dump ('[GF HubSpot]', self::$message);
+        var_dump ('[Gravity Forms HubSpot]', self::$message);
     } // function
 
     private static function write () {
@@ -48,10 +48,4 @@ class GF_Hubspot_Tracking {
 
     } // function
 
-    private static function bigsea () {
-        // Send to BigSea?
-        //  @todo
-
-        // This might eventually be needed because that's what HubSpot wanted eventually, actual numbers of our usage.
-    } // function
 } // 

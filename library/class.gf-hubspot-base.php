@@ -135,8 +135,8 @@
                 $type = $this->bsd_get('connection_type');
                 if ( !$type ) {
                     // We don't even have it STORED?? OMG. ok, there's no way we have enough data stored.
-                    GF_Hubspot_Tracking::log('Connection Type Missing');
-                    return false;
+                    $this->bsd_set('connection_type', 'oauth');
+                    $type = 'oauth';
                 }
             }
 

@@ -64,8 +64,7 @@ class GF_Hubspot_Hooks {
             // Run v2's Upgrade Process
             $ignore_notification_this_load = true;
             set_transient('gf_hubspot_needs_migration', '0.9', 0);
-            $current_page = self::_current_page();
-            wp_redirect($current_page); exit();
+            wp_redirect(get_admin_url(null, 'admin.php?page=gf_settings&subview=gravityforms-hubspot')); exit();
         }
         if ( isset($_GET['trigger']) && $_GET['trigger'] == 'gf_hubspot_dismiss_v2_migration_message' ) {
             // Ignore the upgrade message (booo!)

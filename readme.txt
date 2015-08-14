@@ -20,10 +20,11 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 == Installation ==
 
+1. If you already have the plugin installed, please go to the 'Plugins' menu in WordPress and deactivate it.
 1. Upload the files to the /wp-content/plugins/gravityforms-hubspot/ directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 1. Go to Forms->Settings->HubSpot, and provide valid credentials to connect to your HubSpot Account either via oAuth (recommended) or API Key
-1. Go to Forms->HubSpot and make your first connection!
+1. Go to a Form's Settings->HubSpot section and make your first connection!
 
 *This plugin provides many checks for a proper version of Gravity Forms, as well as HubSpot API validation. Notices will appear at the top of the Admin panel until these issues are resolved or the plugin is deactivated.*
 
@@ -31,23 +32,25 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 = Is my Hub ID required? =
 
-Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot Tracking Code for Wordpress", their official plugin, already includes analytics*)
+Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot Tracking Code for Wordpress", their official plugin, already includes analytics*, and/or some theme developers will have already included it in your code)
 
 *If you are going to connect via API Key, and not include the tracking script, we do not need your Hub ID.*
 
 = Where do I find my HubSpot Hub ID? =
 
-After logging into your account on HubSpot.com, your Hub ID can be found with the product version at the bottom of your HubSpot Dashboard in the footer.
+After logging into your account on HubSpot.com, your Hub ID can be found with the product version at the bottom of your HubSpot Dashboard in the footer, or by looking at the Top Left corner of the screen.
 
 = Where do I get a HubSpot API Key? =
 
-Fill out the form on the following link, and click "Get My API Key": https://app.hubspot.com/keys/get -- You will receive an email containing your API Key, once approved.
+Fill out the form on the following link while logged into HubSpot, and click "Get My API Key": https://app.hubspot.com/keys/get -- You will receive an email containing your API Key, once approved.
 
 = My "Date" field in HubSpot isn't getting the correct date? =
 
-This was due to HubSpot expecting a time in milliseconds, and not actually sending us a code saying that it failed for that reason. As such, we have added support for Field Types in v1.1.4 ... After updating, if you go edit your HubSpot Connections (via Forms > HubSpot), edit the existing one, and click "save" ... it will now support Date, and properly carry over.
+This was due to HubSpot expecting a time in milliseconds, and not actually sending us a code saying that it failed for that reason. As such, we have added support for some Field Types (text, date, and enumeration) in v1.1.4 ... After updating, if you go edit your HubSpot Connections (via Forms > HubSpot), edit the existing one, and click "save" ... it will now support Date, and properly carry over.
 
-We currently only support "date" and "string" types from HubSpot, but we'll work on adding more in the future.
+We currently only support "date", "string", and "enumeration" types from HubSpot, but we'll work on adding more in the future.
+
+"Enumeration" type is the HubSpot format for multiple checkboxes, and similar fields of collection multiple pieces of data at once in a single field.
 
 == Screenshots ==
 
@@ -57,10 +60,12 @@ new screenshots coming soon.
 
 = 2.0 =
 * [NEW] Reworked the whole plugin to use the GFAddon Framework
+    * Settings for each Form has been moved into the Form's "Settings" section. 
 * [NEW] Migration Assistant for moving from v1.6.2 to v2.0
+    * All versions of data from pre v1.1.4 to v1.6.2 all get migrated safely.
 * [REMOVED] Cron! The oAuth handling is now how it should be, and cron script is no longer needed.
 
-** Removed support for less than v0.7 ... If you hadn't updated by now. I don't know what to tell you... Go update all of your settings :) **
+** Removed support for less than v1.1.4 ... This update no longer needs the checks as the migration assistant will take care of the discrepancies :) **
 
 = 1.6.2 =
 * [FIX] Deleting connections now works again. Thanks to 'samureyed' for discovering this bug.

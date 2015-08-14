@@ -69,7 +69,11 @@ class GF_Hubspot_Migration {
 
             foreach ( $connection->form_data['connections'] as $hs_field_name => $data ) {
                 $slug = 'fieldMap_' . $hs_field_name;
-                $meta[$slug] = $data['gf_field_name'];
+                if ( is_array($data) ) :
+                    $meta[$slug] = $data['gf_field_name'];
+                else :
+                    $meta[$slug] = $data;
+                endif;
             }
 
             $gf_hubspot->insert_feed($gform_id, $is_active=1, $meta);

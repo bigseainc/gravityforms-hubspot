@@ -5,8 +5,8 @@ add_action('admin_init', array('GF_Hubspot_Hooks', 'check_for_oauth_response'));
 add_action('admin_notices', array('GF_Hubspot_Hooks', 'admin_notices'));
 
 if ( get_transient ('gf_hubspot_needs_migration') ) {
-    require_once ( GF_HUBSPOT_PATH . 'library/class.migration.php' );
-    add_action('wp_loaded', array('GF_Hubspot_Migration', 'migrate_to_v2'));
+    require_once ( GF_HUBSPOT_PATH . 'library/class.gf-hubspot-migration.php' );
+    add_action('wp_loaded', array('GF_Hubspot_Migration', 'process_migrations'));
 }
 
 // Filters

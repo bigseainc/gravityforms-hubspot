@@ -5,6 +5,36 @@ class GF_Hubspot_Migration {
     private static $_v2_table_name;
     private static $_v2_formfield_base;
 
+    public function process_migrations ( $version=false ) {
+        // We're not on our first loop, let's get the version they're currently on.
+        if ( !$version ) {
+            $version = get_transient ('gf_hubspot_needs_migration');
+
+            // Honestly I should never be missing a migration variable if this migration shit is loading, but... just in case.
+            if ( !$version ) return true;
+        }
+
+        // 2.0 GFFeedAddon Migration
+        if ( version_compare($version, '2.0', '<') ) {
+            self::migrate_to_v2();
+            return self::process_migrations('2.0');
+            set_transient ('gf_hubspot_needs_migration', 2.0);
+        }
+
+        // We are 100% done, we don't need this variable anymore.
+        delete_transient( 'gf_hubspot_needs_migration' );
+        // Add admin success notification.
+        add_action( 'admin_notices', function(){
+            echo '
+                <div class="updated">
+                    <p>HubSpot for Gravity Forms has been successfully updated and migrated. Please verify your settings and connections before continuing.</p>
+                    <p>To learn more, visit our <a href="https://wordpress.org/plugins/gravityforms-hubspot/changelog/" target="_blank">Changelog</a>.</p>
+                </div>
+            ';
+        });
+        return true;
+    } // function
+
     public function migrate_to_v2 () {
         GF_Hubspot_Tracking::log('Migration Assistance is running');
 
@@ -46,18 +76,6 @@ class GF_Hubspot_Migration {
 
             $count++;
         endforeach; endif;
-
-        // After this runs successfully
-        // Add admin success notification.
-        add_action( 'admin_notices', function(){
-            echo '
-                <div class="updated">
-                    <p>HubSpot for Gravity Forms has been successfully updated and migrated. Please verify your settings and connections before continuing.</p>
-                    <p>Your "Connections" have been moved to each indivudual form and can be found under Settings > HubSpot for each form respectively.</p>
-                </div>
-            ';
-        });
-        delete_transient('gf_hubspot_needs_migration');
 
         // Delete all of the older stuff.
         delete_option('gf_bsdhubspot_portal_id');

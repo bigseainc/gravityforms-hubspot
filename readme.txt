@@ -1,4 +1,4 @@
-=== Better HubSpot for Gravity Forms ===
+=== HubSpot for Gravity Forms ===
 Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
@@ -31,7 +31,7 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 = Is my Hub ID required? =
 
-Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot for Wordpress", their official plugin, already includes analytics*)
+Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot Tracking Code for Wordpress", their official plugin, already includes analytics*)
 
 *If you are going to connect via API Key, and not include the tracking script, we do not need your Hub ID.*
 
@@ -42,12 +42,6 @@ After logging into your account on HubSpot.com, your Hub ID can be found with th
 = Where do I get a HubSpot API Key? =
 
 Fill out the form on the following link, and click "Get My API Key": https://app.hubspot.com/keys/get -- You will receive an email containing your API Key, once approved.
-
-= Why do I keep losing my oAuth connection? =
-
-HubSpot's oAuth API requires a new token roughly every 8 hours. If no one visits the website for more than an 8 hours period, this script can't get a newer token, and has to be re-validated. We are still working on a way to resolve this. However, at this point it will likely require a server CRON being set up.
-
-**We highly recommend you use oAuth: it's more secure, and you can safely (and easily) revoke access at any time through HubSpot.**
 
 = My "Date" field in HubSpot isn't getting the correct date? =
 
@@ -68,7 +62,7 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 * [NEW] Migration Assistant for moving from v1.6.2 to v2.0
 * [REMOVED] Cron! The oAuth handling is now how it should be, and cron script is no longer needed.
 
-** Removed support for less than v0.7 ... If you hadn't updated by now. I don't know what to tell you... **
+** Removed support for less than v0.7 ... If you hadn't updated by now. I don't know what to tell you... Go update all of your settings :) **
 
 = 1.6.2 =
 * [FIX] Deleting connections now works again. Thanks to 'samureyed' for discovering this bug.

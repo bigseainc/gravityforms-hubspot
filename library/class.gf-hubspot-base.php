@@ -57,7 +57,10 @@
          *  @return string if failure, object if success
          */
         public function get_connection ( $type=false, $token=false ) {
-            if ( !class_exists('HubSpot_Forms') ) return 'HubSpot Library Not Found.';
+            if ( !class_exists('HubSpot_Forms') ) {
+                GF_Hubspot_Tracking::log(__METHOD__ . '(): HubSpot Library Not Found. How in the what?');
+                return 'HubSpot Library Not Found.';
+            }
 
             if ( !$type ) {
                 $type = $this->bsd_get('connection_type');
@@ -68,6 +71,11 @@
 
             if ( !$token ) {
                 $token = $this->bsd_get('token_'.$type);
+            }
+
+            if ( $type == 'oauth' && !is_array($token) ) {
+                GF_Hubspot_Tracking::log('Invalid oAuth Token. This is usually a temporary issue.', $token);
+                return 'Invalid oAuth token. This is usually a temporary issue.';
             }
 
             if ( $type == 'oauth' && time() > $token['bsd_expires_in'] ) {

@@ -1,6 +1,6 @@
 <?php
 	/*
-		Plugin Name: Better Hubspot for Gravity Forms
+		Plugin Name: Hubspot for Gravity Forms
 		Plugin URI: http://bigseadesign.com/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
 		Version: 2.0
@@ -43,7 +43,7 @@
             // if we need to update something, per version: if ( version_compare($old_version, GF_HUBSPOT_VERSION, "<") )
             if ( version_compare($old_version, '2.0', "<") ) {
                 // Try to do all of the things we can possibly do to help with the migration
-                set_transient('gf_hubspot_needs_migration', true, 0);
+                set_transient('gf_hubspot_needs_migration', $old_version, 0);
             }
 
             update_option('gf_bsdhubspot_plugin_version', GF_HUBSPOT_VERSION);

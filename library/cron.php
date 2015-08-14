@@ -19,8 +19,6 @@
 
 	require_once( dirname( dirname( dirname( dirname( $path ) ) ) ) . '/wp-load.php' );
 
-	var_dump ( wp_get_schedules() );
-
 	// Our internal Wordpress-powered CRON runs every 6 hours, IF a user visits. This one runs every time the CRON runs, regardless of users visiting.
 	bsdGFHubspot::refresh_oauth_token();
 	update_option('gf_bsdhubspot_last_validated', time());

@@ -1,7 +1,8 @@
-.bsd_hubspot.wrap {
-
+#gaddon-setting-row-fieldMap .settings-field-map-table th,
+#gaddon-setting-row-fieldMap .settings-field-map-table td {
+    width: 50%;
 }
-
-.bsd_hubspot.wrap tr.inactive {
-	display: none;
+#gaddon-setting-row-fieldMap .settings-field-map-table select {
+    width: 100%;
+    max-width: inherit;
 }

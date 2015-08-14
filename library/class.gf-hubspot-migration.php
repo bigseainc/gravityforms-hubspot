@@ -27,7 +27,7 @@ class GF_Hubspot_Migration {
         add_action( 'admin_notices', function(){
             echo '
                 <div class="updated">
-                    <p>HubSpot for Gravity Forms has been successfully updated and migrated. Please verify your settings and connections before continuing.</p>
+                    <p>HubSpot for Gravity Forms has been successfully updated and migrated. Please <a href="'.get_admin_url(null, 'admin.php?page=gf_settings&subview=gravityforms-hubspot').'">verify your settings</a> and connections before continuing.</p>
                     <p>To learn more, visit our <a href="https://wordpress.org/plugins/gravityforms-hubspot/changelog/" target="_blank">Changelog</a>.</p>
                 </div>
             ';

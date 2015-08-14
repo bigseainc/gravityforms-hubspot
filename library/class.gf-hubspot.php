@@ -51,7 +51,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
         $styles = array(
             array(
                 'handle'  => 'gform_hubspot_form_settings_css',
-                'src'     => $this->get_base_url() . '/assets/style.css',
+                'src'     => $this->get_base_url() . '/../assets/style.css',
                 'version' => $this->_version,
                 'enqueue' => array(
                     array( 'admin_page' => array( 'form_settings' ) ),

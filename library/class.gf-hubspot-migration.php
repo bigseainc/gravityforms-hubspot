@@ -17,8 +17,8 @@ class GF_Hubspot_Migration {
         // 2.0 GFFeedAddon Migration
         if ( version_compare($version, '2.0', '<') ) {
             self::migrate_to_v2();
-            return self::process_migrations('2.0');
             set_transient ('gf_hubspot_needs_migration', 2.0);
+            return self::process_migrations('2.0');
         }
 
         // We are 100% done, we don't need this variable anymore.

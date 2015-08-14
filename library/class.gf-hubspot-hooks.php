@@ -64,6 +64,8 @@ class GF_Hubspot_Hooks {
             // Run v2's Upgrade Process
             $ignore_notification_this_load = true;
             set_transient('gf_hubspot_needs_migration', '0.9', 0);
+            $current_page = self::_current_page();
+            wp_redirect($current_page); exit();
         }
         if ( isset($_GET['trigger']) && $_GET['trigger'] == 'gf_hubspot_dismiss_v2_migration_message' ) {
             // Ignore the upgrade message (booo!)
@@ -103,4 +105,18 @@ class GF_Hubspot_Hooks {
     } // function
 
 
+    private static function _current_page() {
+        $pageURL = 'http';
+        if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+        
+        $pageURL .= "://";
+        if ($_SERVER["SERVER_PORT"] != "80") {
+            $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+        } else {
+            $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+        }
+        $pageURL;
+
+        return $pageURL;
+    }
 } // class

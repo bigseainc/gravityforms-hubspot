@@ -51,9 +51,7 @@ We currently only support "date" and "string" types from HubSpot, but we'll work
 
 == Screenshots ==
 
-1. The settings page
-2. The page for handling Gravity Forms to HubSpot form connections.
-3. An example of the "Connection" Page between Gravity Forms and HubSpot
+new screenshots coming soon.
 
 == Changelog ==
 

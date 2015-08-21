@@ -1,17 +1,17 @@
 <?php
-	/*
-		Plugin Name: Hubspot for Gravity Forms
-		Plugin URI: http://bigseadesign.com/
-		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 2.0
-		Author: Big Sea
-		Author URI: http://bigseadesign.com
-	*/
+    /*
+        Plugin Name: Hubspot for Gravity Forms
+        Plugin URI: http://bigseadesign.com/
+        Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
+        Version: 2.0.1
+        Author: Big Sea
+        Author URI: http://bigseadesign.com
+    */
 
     // Constants
     define('GF_HUBSPOT_BASENAME', plugin_basename(__FILE__));
     define('GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
-    define('GF_HUBSPOT_VERSION', '2.0');
+    define('GF_HUBSPOT_VERSION', '2.0.1');
 
     // Start up the plugin after GravityForms is loaded.
     add_action( 'gform_loaded', array( 'GF_HubSpot_Bootstrap', 'load' ), 5 );

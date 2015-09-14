@@ -24,15 +24,17 @@ class GF_Hubspot_Migration {
         // We are 100% done, we don't need this variable anymore.
         delete_transient( 'gf_hubspot_needs_migration' );
         // Add admin success notification.
-        add_action( 'admin_notices', function(){
-            echo '
-                <div class="updated">
-                    <p>HubSpot for Gravity Forms has been successfully updated and migrated. Please <a href="'.get_admin_url(null, 'admin.php?page=gf_settings&subview=gravityforms-hubspot').'">verify your settings</a> and connections before continuing.</p>
-                    <p>To learn more, visit our <a href="https://wordpress.org/plugins/gravityforms-hubspot/changelog/" target="_blank">Changelog</a>.</p>
-                </div>
-            ';
-        });
+        add_action( 'admin_notices', array('GF_Hubspot_Migration', 'notice_successful_upgrade'));
         return true;
+    } // function
+
+    public function notice_successful_upgrade () {
+        echo '
+            <div class="updated">
+                <p>HubSpot for Gravity Forms has been successfully updated and migrated. Please <a href="'.get_admin_url(null, 'admin.php?page=gf_settings&subview=gravityforms-hubspot').'">verify your settings</a> and connections before continuing.</p>
+                <p>To learn more, visit our <a href="https://wordpress.org/plugins/gravityforms-hubspot/changelog/" target="_blank">Changelog</a>.</p>
+            </div>
+        ';
     } // function
 
     public function migrate_to_v2 () {

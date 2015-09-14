@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.2.4
-Stable tag: 2.0
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,13 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.0.2 =
+* [FIX] More downgrading of my code due to users with older versions of PHP.
+
+= 2.0.1 =
+* [FIX] Potential issue noticed by 'dsaro' for add_action hooks where some PHP/WP versions won't support anonymous functions. Hoping this fixes it for them, as I can't replicate, but working on a solid assumption.
+* [FIX] Potential fix for the issue first noticed by 'nickvillaume' in regards to SSL error message during cURL call to HubSpot.
 
 = 2.0 =
 * [NEW] Reworked the whole plugin to use the GFAddon Framework
@@ -144,6 +151,9 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+Minor potential bug fixes.
 
 = 2.0 =
 Reworked! More efficient than ever! We will migrate your settings, but please take a look and confirm your settings. :)

@@ -11,7 +11,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
     protected $_slug = 'gravityforms-hubspot';
     protected $_path = 'gravityforms-hubspot/gravityforms-hubspot.php';
     protected $_full_path = __FILE__;
-    protected $_url = 'http://www.bigseadesign.com';
+    protected $_url = 'http://bigseadesign.com';
     protected $_title = 'Gravity Forms HubSpot Add-On';
     protected $_short_title = 'HubSpot';
     protected $_enable_rg_autoupgrade = false;
@@ -95,7 +95,12 @@ class GF_HubSpot extends GF_HubSpot_Base {
         // If API instance is not initialized, exit.
         if ( !is_a($this->_hubspot, 'HubSpot_Forms') ) {
             GF_Hubspot_Tracking::log(__METHOD__ . '(): API not initialized successfully');
-            $this->add_feed_error( 'Feed was not processed because API was not initialized.', $feed, $entry, $form );
+            $this->add_feed_error( 
+                'HubSpot Feed was not processed because API was not initialized.', 
+                $feed, 
+                $entry, 
+                $form 
+            );
             return;
         }
 
@@ -115,7 +120,12 @@ class GF_HubSpot extends GF_HubSpot_Base {
 
                 if ( $field->required && !$gf_field_value ) {
                     GF_Hubspot_Tracking::log(__METHOD__ . '(): Required field "'.$field->label.'" missing.', $field, $gf_field_value);
-                    $this->add_feed_error( 'Required field "'.$field->label.'" for form "'.$hubspot_form->name.'" ('.$form_id.') missing.', $field, $gf_field_value );
+                    $this->add_feed_error( 
+                        'Required field "'.$field->label.'" for form "'.$hubspot_form->name.'" ['.$form_id.'] missing.', 
+                        $feed, 
+                        $entry,
+                        $form 
+                    );
                     return;
                 }
 
@@ -145,13 +155,18 @@ class GF_HubSpot extends GF_HubSpot_Base {
             // 204 - success and nothing returned
             // 302 - success, but including a redirect (we're ignoring)
 
-
             GF_Hubspot_Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
             return;
         }
 
         // Shouldn't make it here, but if we do, let's log it.
         GF_Hubspot_Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result);
+        $this->add_feed_error( 
+            'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
+            $feed, 
+            $entry,
+            $form 
+        );
 
     } // function
 

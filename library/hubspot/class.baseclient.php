@@ -36,7 +36,7 @@ class HubSpot_BaseClient
     protected $KEY_PARAM = '?hapikey=';
     protected $PROD_DOMAIN = 'https://api.hubapi.com';
     protected $QA_DOMAIN = 'https://hubapiqa.com';
-    protected $userAgent;    // new
+    protected $userAgent;  
 
     /**
      * The HTTP status of the most recent request
@@ -222,9 +222,10 @@ class HubSpot_BaseClient
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);    // new
+        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);  
         $output = curl_exec($ch);
         $errno = curl_errno($ch);
         $error = curl_error($ch);
@@ -255,7 +256,8 @@ class HubSpot_BaseClient
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);    // new
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
+        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);  
 
         if ($formenc)
         {
@@ -292,8 +294,9 @@ class HubSpot_BaseClient
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);    // new
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));    // new
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
+        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);  
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));  
         $output = curl_exec($ch);
         $errno = curl_errno($ch);
         $error = curl_error($ch);
@@ -324,6 +327,7 @@ class HubSpot_BaseClient
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
         curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/atom+xml'));
         $output = curl_exec($ch);
@@ -352,6 +356,7 @@ class HubSpot_BaseClient
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
         curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($body)));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -384,6 +389,7 @@ class HubSpot_BaseClient
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
         curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/atom+xml','Content-Length: ' . strlen($body)));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -416,6 +422,7 @@ class HubSpot_BaseClient
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CAINFO, GF_HUBSPOT_PATH . 'assets/cacert.pem');
         curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: ' . strlen($body)));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

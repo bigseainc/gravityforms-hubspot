@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.2.4
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,11 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.0.3 =
+* [FIX] Sent the wrong arguments to GravityForm's feed_error function for a rare case that configuration is not correct for a Gravity Forms field being matched with HubSpot.
+
+Thanks to Wordpress.org user "Theorem_US" for finding this issues. (https://wordpress.org/support/topic/php-error-when-submitting-form)
 
 = 2.0.2 =
 * [FIX] More downgrading of my code due to users with older versions of PHP.
@@ -151,9 +156,6 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
-
-= 2.0.1 =
-Minor potential bug fixes.
 
 = 2.0 =
 Reworked! More efficient than ever! We will migrate your settings, but please take a look and confirm your settings. :)

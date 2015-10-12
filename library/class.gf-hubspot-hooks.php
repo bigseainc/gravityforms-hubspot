@@ -56,7 +56,7 @@ class GF_Hubspot_Hooks {
     } // function
 
 
-    public function check_for_pre_v2_settings () {
+    public static function check_for_pre_v2_settings () {
         $ignore_notification_this_load = false;
 
         // Check for Triggers and run them.

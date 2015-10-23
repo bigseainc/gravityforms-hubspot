@@ -97,7 +97,7 @@
                 $forms = $this->_hubspot->get_forms();
                 if ( isset($forms->status) && $forms->status == 'error' ) {
                     $this->_hubspot = null;
-                    GF_Hubspot_Tracking::log('[HubSpot] ' . $forms->message);
+                    GF_Hubspot_Tracking::log('[HubSpot Error] ' . $forms->message);
                     return $forms->message;
                 }
                 $this->_confirmed_hubspot_once = true;
@@ -176,9 +176,14 @@
             if ( GF_HUBSPOT_DEBUG || !($data = get_transient($transient_name)) ) {
                 $data = $this->_hubspot->get_forms();
 
+                GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms Received From HubSpot', $data);
+
                 // Only store if data returned is valid JSON
                 if ( $data )
                     set_transient( $transient_name, $data, $transient_expiration ); 
+            }
+            else {
+                GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms collected from CACHE');
             }
 
             return $data;
@@ -193,9 +198,13 @@
             if ( GF_HUBSPOT_DEBUG || !($data = get_transient( $transient_name )) ) {
                 $data = $this->_hubspot->get_form_by_id( $guid );
 
+                GF_Hubspot_Tracking::log(__METHOD__ . '(): Form ['.$guid.'] details collected from HubSpot ', $data );
                 // Only store if data returned is valid JSON
                 if ( $data )
                     set_transient( $transient_name, $data, $transient_expiration );
+            }
+            else {
+                GF_Hubspot_Tracking::log(__METHOD__ . '(): Form ['.$guid.'] details collected from CACHE');
             }
 
             return $data;

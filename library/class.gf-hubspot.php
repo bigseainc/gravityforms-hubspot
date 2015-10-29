@@ -160,7 +160,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
         }
 
         // Shouldn't make it here, but if we do, let's log it.
-        GF_Hubspot_Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result);
+        GF_Hubspot_Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result, $status_code);
         $this->add_feed_error( 
             'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
             $feed, 

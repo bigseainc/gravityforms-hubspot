@@ -14,6 +14,7 @@
 
         protected   $_hubspot;
         private     $_confirmed_hubspot_once;
+        private     $_cache_group = 'gfhs_forms';
 
         /**
          *  refresh_oauth_token
@@ -170,17 +171,21 @@
          */
 
         protected function _get_forms () {
-            $transient_name = 'gfhs_forms';
-            $transient_expiration = (60*60); // store for 1 hour.
+            $cache = new GF_Hubspot_Cache();
 
-            if ( GF_HUBSPOT_DEBUG || !($data = get_transient($transient_name)) ) {
+            $transient_name = 'forms';
+
+            $data = $cache->get( $transient_name );
+            //$data = get_transient($transient_name);
+            if ( GF_HUBSPOT_DEBUG || $data === false ) {
                 $data = $this->_hubspot->get_forms();
 
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms Received From HubSpot', $data);
-
                 // Only store if data returned is valid JSON
-                if ( $data )
-                    set_transient( $transient_name, $data, $transient_expiration ); 
+                if ( $data ) {
+                    $cache->set( $transient_name, $data );
+                    // set_transient( $transient_name, $data, 15 * MINUTE_IN_SECONDS ); 
+                }
             }
             else {
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms collected from CACHE');
@@ -192,16 +197,20 @@
         protected function _get_form ( $guid ) {
             if ( !$guid ) return false;
 
-            $transient_name = 'gfhs_form_' . $guid;
-            $transient_expiration = (60*60); // store for 1 hour.
+            $cache = new GF_Hubspot_Cache();
 
-            if ( GF_HUBSPOT_DEBUG || !($data = get_transient( $transient_name )) ) {
+            $transient_name = 'form_' . $guid;
+            $data = $cache->get( $transient_name );
+            // $data = get_transient ( $transient_name );
+            if ( GF_HUBSPOT_DEBUG || $data === false ) {
                 $data = $this->_hubspot->get_form_by_id( $guid );
 
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Form ['.$guid.'] details collected from HubSpot ', $data );
                 // Only store if data returned is valid JSON
-                if ( $data )
-                    set_transient( $transient_name, $data, $transient_expiration );
+                if ( $data ) {
+                    $cache->set( $transient_name, $data );
+                    //set_transient( $transient_name, $data, MINUTE_IN_SECONDS );
+                }
             }
             else {
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Form ['.$guid.'] details collected from CACHE');

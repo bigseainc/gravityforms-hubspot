@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.2.4
-Stable tag: 2.0.4
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.1 = 
+* [FIX] Rewrote the caching to not rely on WP Transient API. Rolled our own solution.
 
 = 2.0.4 =
 * [NEW] Added improvements to the HubSpot calls that should solve some Security errors that some users get.
@@ -160,26 +163,20 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 
 == Upgrade Notice ==
 
+= 2.1 =
+Caching no longer problematic! Rolled our own caching solution that stores in the gravityforms-hubspot/cache directory
+
 = 2.0 =
 Reworked! More efficient than ever! We will migrate your settings, but please take a look and confirm your settings. :)
 
-= 1.6.2 =
-Fixes ability to delete connections.
-
 = 1.4 =
 Enumeration fieldtype support
-
-= 1.3.1 =
-PHP Warning fixes
 
 = 1.3 =
 API Key method bug fixes
 
 = 1.2 =
 Bug Fixes
-
-= 1.1.4 =
-The beginning of support for field types from HubSpot. "Date" and "String" field types only supported formats.
 
 = 1.1 =
 Vital change. Fixes the ability to create new connections.

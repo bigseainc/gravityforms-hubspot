@@ -176,15 +176,14 @@
             $transient_name = 'forms';
 
             $data = $cache->get( $transient_name );
-            //$data = get_transient($transient_name);
-            if ( GF_HUBSPOT_DEBUG || $data === false ) {
+            if ( GF_HUBSPOT_DEBUG ||  !$data ) {
+                var_dump ( 'form cache is running' );
                 $data = $this->_hubspot->get_forms();
 
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms Received From HubSpot', $data);
                 // Only store if data returned is valid JSON
                 if ( $data ) {
                     $cache->set( $transient_name, $data );
-                    // set_transient( $transient_name, $data, 15 * MINUTE_IN_SECONDS ); 
                 }
             }
             else {
@@ -201,15 +200,13 @@
 
             $transient_name = 'form_' . $guid;
             $data = $cache->get( $transient_name );
-            // $data = get_transient ( $transient_name );
-            if ( GF_HUBSPOT_DEBUG || $data === false ) {
+            if ( GF_HUBSPOT_DEBUG || !$data ) {
                 $data = $this->_hubspot->get_form_by_id( $guid );
 
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Form ['.$guid.'] details collected from HubSpot ', $data );
                 // Only store if data returned is valid JSON
                 if ( $data ) {
                     $cache->set( $transient_name, $data );
-                    //set_transient( $transient_name, $data, MINUTE_IN_SECONDS );
                 }
             }
             else {

@@ -61,6 +61,11 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 
 == Changelog ==
 
+= 2.1.1 =
+* [FIX] Removed var_dump that shouldn't have been there anymore.
+* [FIX] Check to see if I have write ability before trying to write/view new cache.
+* [WARN] If cache doesn't appear to be working, check the /cache/ folder in the plugin, set the permissions to 777.
+
 = 2.1 = 
 * [FIX] Rewrote the caching to not rely on WP Transient API. Rolled our own solution.
 

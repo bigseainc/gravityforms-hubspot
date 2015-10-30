@@ -176,8 +176,7 @@
             $transient_name = 'forms';
 
             $data = $cache->get( $transient_name );
-            if ( GF_HUBSPOT_DEBUG ||  !$data ) {
-                var_dump ( 'form cache is running' );
+            if ( GF_HUBSPOT_DEBUG || !$data ) {
                 $data = $this->_hubspot->get_forms();
 
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms Received From HubSpot', $data);

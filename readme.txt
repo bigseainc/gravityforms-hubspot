@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.2.4
-Stable tag: 2.1
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,11 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.1.1 =
+* [FIX] Removed var_dump that shouldn't have been there anymore.
+* [FIX] Check to see if I have write ability before trying to write/view new cache.
+* [WARN] If cache doesn't appear to be working, check the /cache/ folder in the plugin, set the permissions to 777.
 
 = 2.1 = 
 * [FIX] Rewrote the caching to not rely on WP Transient API. Rolled our own solution.

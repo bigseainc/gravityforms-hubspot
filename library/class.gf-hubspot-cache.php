@@ -8,26 +8,21 @@
 */
 
 class GF_Hubspot_Manifest {
-    private $_contents;
-    private $_manifestFile;
+    private $_manifestContents = array();
+    private $_manifestFile = '';
+    public $cachingEnabled = true;
 
     const DEFAULT_CACHE_LIMIT = 3600; // 1 hour, in seconds
 
     public function __construct ( $file ) {
         $this->_manifestFile = $file;
-        $handle = fopen( $this->_manifestFile, 'r' );
-        while ( !feof( $handle ) ) {
-            $line = fgets($handle);
-            if ( trim($line) == '' ) continue;
-            
-            list($guid, $timeToExpiration) = explode('::', $line);
-            $this->_contents[$guid] = new DateTime(date('Y-m-d H:i:s', $timeToExpiration));
-        }
-        fclose($handle);
+        
+        $this->_processManifest ();
     } // function
 
+
     public function getManifestRecord ( $guid ) {
-        if ( isset ( $this->_contents[$guid] ) ) return $this->_contents[$guid];
+        if ( isset ( $this->_manifestContents[$guid] ) ) return $this->_manifestContents[$guid];
 
         return false;
     } // function
@@ -35,22 +30,45 @@ class GF_Hubspot_Manifest {
     public function updateManifestRecord ( $guid, $timeout = self::DEFAULT_CACHE_LIMIT ) {
         $date = new DateTime ();
         $date->modify("+{$timeout} second");
-        $this->_contents[$guid] = $date;
+        $this->_manifestContents[$guid] = $date;
 
         $this->_saveManifestFile();
     } // function
 
     public function removeManifestRecord ( $guid ) {
-        unset ( $this->_contents[$guid] );
+        unset ( $this->_manifestContents[$guid] );
         $this->_saveManifestFile();
     }
 
+    private function _processManifest () {
+        $handle = fopen( $this->_manifestFile, 'r' );
+        if ( !$handle ) {
+            $this->cachingEnabled = false;
+            GF_Hubspot_Tracking::log('Caching is not Enabled. Folder is not writable.');
+            return false;
+        }
+
+        while ( !feof( $handle ) ) {
+            $line = fgets($handle);
+            if ( trim($line) == '' ) continue;
+            
+            list($guid, $timeToExpiration) = explode('::', $line);
+            $this->_manifestContents[$guid] = new DateTime(date('Y-m-d H:i:s', $timeToExpiration));
+        }
+        fclose($handle);
+    }
+
     private function _saveManifestFile () {
+        if ( !$this->cachingEnabled ) return false;
+
         $handle = fopen( $this->_manifestFile, 'w' );
-        foreach ( $this->_contents as $key => $value) {
+
+        foreach ( $this->_manifestContents as $key => $value) {
             fwrite($handle, $key . '::' . $value->getTimestamp() . PHP_EOL);
         }
         fclose($handle);
+
+        return true;
     } // function
 } // class
 
@@ -122,6 +140,8 @@ class GF_Hubspot_Cache {
     }
 
     private function _setCacheFileContents ( $data ) {
+        if ( !$this->_manifest->cachingEnabled ) return;
+
         return file_put_contents( $this->_cacheFilePath(), json_encode($data) );
     }
 } // class

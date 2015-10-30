@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.2.4
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.1.2 =
+* [FIX] Supressing the warning for the cache file opening, if it doesn't exist, as it'll exist soon enough.
 
 = 2.1.1 =
 * [FIX] Removed var_dump that shouldn't have been there anymore.

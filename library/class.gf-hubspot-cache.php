@@ -41,7 +41,7 @@ class GF_Hubspot_Manifest {
     }
 
     private function _processManifest () {
-        $handle = fopen( $this->_manifestFile, 'r' );
+        $handle = @fopen( $this->_manifestFile, 'r' );
         if ( !$handle ) {
             $this->cachingEnabled = false;
             GF_Hubspot_Tracking::log('Caching is not Enabled. Folder is not writable.');
@@ -61,7 +61,7 @@ class GF_Hubspot_Manifest {
     private function _saveManifestFile () {
         if ( !$this->cachingEnabled ) return false;
 
-        $handle = fopen( $this->_manifestFile, 'w' );
+        $handle = @fopen( $this->_manifestFile, 'w' );
 
         foreach ( $this->_manifestContents as $key => $value) {
             fwrite($handle, $key . '::' . $value->getTimestamp() . PHP_EOL);

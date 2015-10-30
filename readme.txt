@@ -61,6 +61,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 
 == Changelog ==
 
+= 2.1.2 =
+* [FIX] Supressing the warning for the cache file opening, if it doesn't exist, as it'll exist soon enough.
+
 = 2.1.1 =
 * [FIX] Removed var_dump that shouldn't have been there anymore.
 * [FIX] Check to see if I have write ability before trying to write/view new cache.

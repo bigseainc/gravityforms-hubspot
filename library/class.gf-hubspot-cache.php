@@ -59,10 +59,9 @@ class GF_Hubspot_Manifest {
     }
 
     private function _saveManifestFile () {
-        if ( !$this->cachingEnabled ) return false;
-
         $handle = @fopen( $this->_manifestFile, 'w' );
-
+        if ( !$handle ) return;
+        
         foreach ( $this->_manifestContents as $key => $value) {
             fwrite($handle, $key . '::' . $value->getTimestamp() . PHP_EOL);
         }

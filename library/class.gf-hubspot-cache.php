@@ -10,7 +10,6 @@
 class GF_Hubspot_Manifest {
     private $_manifestContents = array();
     private $_manifestFile = '';
-    public $cachingEnabled = true;
 
     const DEFAULT_CACHE_LIMIT = 3600; // 1 hour, in seconds
 
@@ -43,7 +42,6 @@ class GF_Hubspot_Manifest {
     private function _processManifest () {
         $handle = @fopen( $this->_manifestFile, 'r' );
         if ( !$handle ) {
-            $this->cachingEnabled = false;
             GF_Hubspot_Tracking::log('Caching is not Enabled. Folder is not writable.');
             return false;
         }
@@ -80,8 +78,13 @@ class GF_Hubspot_Cache {
     private $_cacheRecordName;
 
     public function __construct () {
+        $upload_dir = wp_upload_dir();
+        $default_cache_path = $upload_dir['basedir'] . '/gf_hubspot_cache';
+        
         $this->_cacheLimit = apply_filters( 'gfhs_cache_limit', 1800 );
-        $this->_cachePath = apply_filters( 'gfhs_cache_path', GF_HUBSPOT_PATH . 'cache/' );
+        $this->_cachePath = trailingslashit(apply_filters( 'gfhs_cache_path', $default_cache_path ));
+        
+        $this->_checkCachePathDirectoryAndCreateIfNeeded();
 
         $manifestFile = $this->_cachePath . '.manifest';
         $this->_manifest = new GF_Hubspot_Manifest($manifestFile);
@@ -132,6 +135,12 @@ class GF_Hubspot_Cache {
         return false;
     }
 
+    private function _checkCachePathDirectoryAndCreateIfNeeded () {
+        if ( wp_mkdir_p( $this->_cachePath ) !== TRUE ) {
+            GF_Hubspot_Tracking::log('Could not create cache directory', $this->_cachePath );            
+        }
+    }
+
     private function _getCacheFileContents () {
         if ( $this->_cacheFileMissing() ) return false;
 
@@ -139,8 +148,6 @@ class GF_Hubspot_Cache {
     }
 
     private function _setCacheFileContents ( $data ) {
-        if ( !$this->_manifest->cachingEnabled ) return;
-
         return file_put_contents( $this->_cacheFilePath(), json_encode($data) );
     }
 } // class

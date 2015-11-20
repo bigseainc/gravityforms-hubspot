@@ -61,8 +61,15 @@ class GF_Hubspot_Manifest {
         if ( !$handle ) return;
         
         foreach ( $this->_manifestContents as $key => $value) {
-            fwrite($handle, $key . '::' . $value->getTimestamp() . PHP_EOL);
-        }
+            if ( method_exists( $value, 'getTimestamp' ) ) {
+                // PHP 5.3.x+
+                fwrite($handle, $key . '::' . $value->getTimestamp() . PHP_EOL);
+            }
+            else {
+                // PHP 5.2.x
+                fwrite($handle, $key . '::' . $value->format('U') . PHP_EOL);
+            }
+        } // endforeach
         fclose($handle);
 
         return true;

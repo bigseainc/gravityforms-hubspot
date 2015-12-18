@@ -51,7 +51,7 @@ class GF_Hubspot_Manifest {
             if ( trim($line) == '' ) continue;
             
             list($guid, $timeToExpiration) = explode('::', $line);
-            $this->_manifestContents[$guid] = new DateTime(date('Y-m-d H:i:s', $timeToExpiration));
+            $this->_manifestContents[$guid] = new DateTime(date('Y-m-d H:i:s', trim($timeToExpiration)));
         }
         fclose($handle);
     }

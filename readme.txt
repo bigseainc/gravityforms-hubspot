@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.3.1
-Stable tag: 2.1.4
+Stable tag: 2.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,11 +61,14 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 
 == Changelog ==
 
+= 2.1.5 =
+* [FIX] Caching script had a whitespace bug that was causing "non well-formed numeric value" errors. (found by alexdef)
+
 = 2.1.4 =
 * [FIX] Support for php 5.2 for the caching...
 
 = 2.1.3 =
-* [IMPROVEMENT] Moved the cache file into the /uploads folder and out of the plugin.
+* [UPDATE] Moved the cache file into the /uploads folder and out of the plugin.
 
 = 2.1.2 =
 * [FIX] Supressing the warning for the cache file opening, if it doesn't exist, as it'll exist soon enough.

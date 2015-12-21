@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.3.1
-Stable tag: 2.1.5
+Stable tag: 2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.2 =
+* [NEW] Continuing to bring things more inline with HubSpot's own embeds. Now includes the ability to not include the tracking cookie (In instances where you want duplicate entries in HubSpot for the same user, like during Trade Shows).
 
 = 2.1.5 =
 * [FIX] Caching script had a whitespace bug that was causing "non well-formed numeric value" errors. (found by alexdef)
@@ -179,6 +182,9 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 2.2 =
+New feature! Disabling Tracking Cookie is now possible on a per-feed basis.
 
 = 2.1 =
 Caching no longer problematic! Rolled our own caching solution that stores in the gravityforms-hubspot/cache directory

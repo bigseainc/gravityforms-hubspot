@@ -137,15 +137,14 @@ class GF_HubSpot extends GF_HubSpot_Base {
         // With all of the data organized now, let's get the HubSpot call ready.
         $hubspotutk     = $_COOKIE['hubspotutk'];
         $ip_addr        = $_SERVER['REMOTE_ADDR']; //IP address too.
-        $hs_context     = '';
-        if ( rgars ( $feed, 'meta/disableCookie' ) != 1 ) {
-            $hs_context     = array(
-                    'hutk'      => $hubspotutk,
-                    'ipAddress' => $ip_addr,
-                    'pageUrl'   => site_url(),
-                    'pageName'  => rgars($form, 'title')
-                );
-            $hs_context_json = json_encode($hs_context);
+        $hs_context     = array(
+                'hutk'      => $hubspotutk,
+                'ipAddress' => $ip_addr,
+                'pageUrl'   => site_url(),
+                'pageName'  => rgars($form, 'title')
+            );
+        if ( rgars ( $feed, 'meta/disableCookie' ) == 1 ) {
+            unset($hs_context['hutk']);
         }
 
         // Try to send the form.

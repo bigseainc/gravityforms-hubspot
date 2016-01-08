@@ -140,8 +140,8 @@ class GF_HubSpot extends GF_HubSpot_Base {
         $hs_context     = array(
                 'hutk'      => $hubspotutk,
                 'ipAddress' => $ip_addr,
-                'pageUrl'   => site_url(),
-                'pageName'  => rgars($form, 'title')
+                'pageUrl'   => apply_filters( 'gf_hubspot_context_url', site_url() ),
+                'pageName'  => apply_filters( 'gf_hubspot_context_name', rgars($form, 'title') ),
             );
         if ( rgars ( $feed, 'meta/disableCookie' ) == 1 ) {
             unset($hs_context['hutk']);

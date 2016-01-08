@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.3.1
-Stable tag: 2.2
+Stable tag: 2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.3 =
+* [NEW] Two new filters, for changing the HubSpot Context that gets sent to HubSpot. The Page Name and URL default to the Form Name, and the site URL, by default. You can override these with `add_filter` and using the hooks `gf_hubspot_context_url` and `gf_hubspot_context_name` respectively. (thanks to Robert for the suggestion)
 
 = 2.2 =
 * [NEW] Continuing to bring things more inline with HubSpot's own embeds. Now includes the ability to not include the tracking cookie (In instances where you want duplicate entries in HubSpot for the same user, like during Trade Shows).

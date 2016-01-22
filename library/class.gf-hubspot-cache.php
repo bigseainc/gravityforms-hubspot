@@ -11,7 +11,7 @@ class GF_Hubspot_Manifest {
     private $_manifestContents = array();
     private $_manifestFile = '';
 
-    const DEFAULT_CACHE_LIMIT = 3600; // 1 hour, in seconds
+    const DEFAULT_CACHE_LIMIT = 900; // 1 hour, in seconds
 
     public function __construct ( $file ) {
         $this->_manifestFile = $file;
@@ -88,7 +88,7 @@ class GF_Hubspot_Cache {
         $upload_dir = wp_upload_dir();
         $default_cache_path = $upload_dir['basedir'] . '/gf_hubspot_cache';
         
-        $this->_cacheLimit = apply_filters( 'gfhs_cache_limit', 1800 );
+        $this->_cacheLimit = apply_filters( 'gfhs_cache_limit', 900 );
         $this->_cachePath = trailingslashit(apply_filters( 'gfhs_cache_path', $default_cache_path ));
         
         $this->_checkCachePathDirectoryAndCreateIfNeeded();

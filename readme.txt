@@ -3,8 +3,8 @@ Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
-Tested up to: 4.3.1
-Stable tag: 2.2
+Tested up to: 4.4.1
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field
 
 If you’ve got a WordPress site that uses Gravity Forms, you’ve probably already spent time designing them to match your site and function the way you need - responsive, beautiful forms.  Now, you or your client wants to integrate HubSpot and you need a way to get those contacts into your lead management funnel - well here’s your solution!
 
-* Authenticate using oAuth or add your HubSpot API credentials
+* Authenticate using oAuth
 * Create a form in HubSpot with fields that match all (or any part) of your fields in Gravity Forms
 * Profit! 
 
@@ -23,10 +23,10 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 1. If you already have the plugin installed, please go to the 'Plugins' menu in WordPress and deactivate it.
 1. Upload the files to the /wp-content/plugins/gravityforms-hubspot/ directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
-1. Go to Forms->Settings->HubSpot, and provide valid credentials to connect to your HubSpot Account either via oAuth (recommended) or API Key
+1. Go to Forms->Settings->HubSpot, and provide valid credentials to connect to your HubSpot Account via oAuth
 1. Go to a Form's Settings->HubSpot section and make your first connection!
 
-*This plugin provides many checks for a proper version of Gravity Forms, as well as HubSpot API validation. Notices will appear at the top of the Admin panel until these issues are resolved or the plugin is deactivated.*
+*This plugin provides many checks for a proper version of Gravity Forms, as well as HubSpot oAuth validation. Notices will appear at the top of the Admin panel until these issues are resolved or the plugin is deactivated.*
 
 == Frequently Asked Questions ==
 
@@ -34,19 +34,9 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot Tracking Code for Wordpress", their official plugin, already includes analytics*, and/or some theme developers will have already included it in your code)
 
-*If you are going to connect via API Key, and not include the tracking script, we do not need your Hub ID.*
-
 = Where do I find my HubSpot Hub ID? =
 
 After logging into your account on HubSpot.com, your Hub ID can be found with the product version at the bottom of your HubSpot Dashboard in the footer, or by looking at the Top Left corner of the screen.
-
-= Where do I get a HubSpot API Key? =
-
-Fill out the form on the following link while logged into HubSpot, and click "Get My API Key": https://app.hubspot.com/keys/get -- You will receive an email containing your API Key, once approved.
-
-= My "Date" field in HubSpot isn't getting the correct date? =
-
-This was due to HubSpot expecting a time in milliseconds, and not actually sending us a code saying that it failed for that reason. As such, we have added support for some Field Types (text, date, and enumeration) in v1.1.4 ... After updating, if you go edit your HubSpot Connections (via Forms > HubSpot), edit the existing one, and click "save" ... it will now support Date, and properly carry over.
 
 We currently only support "date", "string", and "enumeration" types from HubSpot, but we'll work on adding more in the future.
 
@@ -60,6 +50,13 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.3.1 =
+* [FIX] Values that include a comma (such as $60,000) no longer get broken when being sent to HubSpot for Enumeration-based fields. However, values for enumeration fields (checkboxes, select, radio) still will encounter this issue if ', ' (with a space) is used for their value. Working on a more permanent fix. (found by forthesakeofreason)
+* [WARN] Removed the cron.php file as it's no longer needed for continual oAuth re-validation.
+
+= 2.3 =
+* [NEW] Two new filters, for changing the HubSpot Context that gets sent to HubSpot. The Page Name and URL default to the Form Name, and the site URL, by default. You can override these with `add_filter` and using the hooks `gf_hubspot_context_url` and `gf_hubspot_context_name` respectively. (thanks to Robert for the suggestion)
 
 = 2.2 =
 * [NEW] Continuing to bring things more inline with HubSpot's own embeds. Now includes the ability to not include the tracking cookie (In instances where you want duplicate entries in HubSpot for the same user, like during Trade Shows).

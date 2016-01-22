@@ -140,8 +140,8 @@ class GF_HubSpot extends GF_HubSpot_Base {
         $hs_context     = array(
                 'hutk'      => $hubspotutk,
                 'ipAddress' => $ip_addr,
-                'pageUrl'   => site_url(),
-                'pageName'  => rgars($form, 'title')
+                'pageUrl'   => apply_filters( 'gf_hubspot_context_url', site_url() ),
+                'pageName'  => apply_filters( 'gf_hubspot_context_name', rgars($form, 'title') ),
             );
         if ( rgars ( $feed, 'meta/disableCookie' ) == 1 ) {
             unset($hs_context['hutk']);
@@ -510,7 +510,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
             case 'enumeration' :
                 // We're expecting multiple pieces of data
                 if ( !is_array( $data ) ) {
-                    $data = explode(',', $data);
+                    $data = explode(', ', $data);
                     foreach ( $data as &$content ) {
                         $content = trim($content);
                     }

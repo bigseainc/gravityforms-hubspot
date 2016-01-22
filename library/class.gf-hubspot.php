@@ -129,7 +129,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
                     return;
                 }
 
-                $data_to_hubspot[$field->name] = $this->_get_field_formatted_for_hubspot($field->type, $gf_field_value);
+                $data_to_hubspot[$field->name] = $this->_get_field_formatted_for_hubspot($field, $gf_field_value);
             endif;
         endforeach;
 
@@ -148,8 +148,9 @@ class GF_HubSpot extends GF_HubSpot_Base {
         }
 
         // Try to send the form.
-        $result = $this->_hubspot->submit_form($this->bsd_get('hub_id'), $form_id, $data_to_hubspot, $hs_context);
-        $status_code = $this->_hubspot->getLastStatus();
+        var_dump ($data_to_hubspot); exit();
+        //$result = $this->_hubspot->submit_form($this->bsd_get('hub_id'), $form_id, $data_to_hubspot, $hs_context);
+        //$status_code = $this->_hubspot->getLastStatus();
 
         if ( in_array($status_code, array(200, 204, 302)) ) {
             // Success!
@@ -502,21 +503,26 @@ class GF_HubSpot extends GF_HubSpot_Base {
     } // function
 
 
-    private function _get_field_formatted_for_hubspot ( $hs_field_type, $data ) {
-        switch ( $hs_field_type ) {
+    private function _get_field_formatted_for_hubspot ( $hs_field, $data ) {
+
+        switch ( $hs_field->type ) {
             case 'date' :
                 return strtotime($data) * 1000;
                 break;
             case 'enumeration' :
-                // We're expecting multiple pieces of data
-                if ( !is_array( $data ) ) {
-                    $data = explode(',', $data);
-                    foreach ( $data as &$content ) {
-                        $content = trim($content);
+                if ( $hs_field->fieldType == 'checkbox' ) {
+                    // We're expecting multiple pieces of data
+                    if ( !is_array( $data ) ) {
+                        $explodedData = explode(',', $data);
+                        foreach ( $explodedData as &$content ) {
+                            $content = trim($content);
+                        }
                     }
+
+                    return implode(';', $explodedData);
                 }
 
-                return implode(';', $data);
+                return $data;
                 break;
             default :
                 return $data;

@@ -89,6 +89,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
      * @return void
      */
     public function process_feed( $feed, $entry, $form ) {
+        $feed = apply_filters( 'gf_hubspot_process_feed', $feed, $entry, $form );
 
         // Make sure we have a fresh connection.
         $this->get_connection();
@@ -470,8 +471,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
         }
 
         $response = $this->_get_form( $form_guid );
-        if ( is_array($response->fields) ) : foreach ( $response->fields as $field ) : 
-            // var_dump ( $field );
+        if ( is_object($response) && is_array($response->fields) ) : foreach ( $response->fields as $field ) : 
             $output[] = array (
                 'label'     => $field->label,
                 'name'      => $field->name,

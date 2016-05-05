@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.4.1
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,10 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.3.2 =
+* [FIX] Extra check to make sure the $response I have is an actual object. Clearly there's a larger issue at play here, though, if this is being encountered at that stage of the game? Short term solution for now. 
+* [NEW] New filter "gf_hubspot_process_feed": Allows manipulation of the Feed data prior to processing and sending to HubSpot. Suggested by Nathan Marks.
 
 = 2.3.1 =
 * [FIX] Values that include a comma (such as $60,000) no longer get broken when being sent to HubSpot for Enumeration-based fields. However, values for enumeration fields (checkboxes, select, radio) still will encounter this issue if ', ' (with a space) is used for their value. Working on a more permanent fix. (found by forthesakeofreason)

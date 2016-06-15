@@ -3,8 +3,8 @@ Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
-Tested up to: 4.4.1
-Stable tag: 2.3.2
+Tested up to: 4.5.2
+Stable tag: 2.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,14 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.3.3 =
+* [NEW] `apply_filters( 'gf_hubspot_data_outgoing', $data, $GFform, $feedData );` Allows you to change the data that's being sent to HubSpot. Be mindful of formats that HubSpot expects (A list of items must be semi-colon separated, for instance). An array of Key => Value where Key is the HubSpot field slug, and the Value is what will be sent to HubSpot for that field.
+* [NEW] `apply_filters( 'gf_hubspot_forms_incoming', $forms );` Array of Form objects received from HubSpot. If you wanted to go through to track with some custom settings. Changes do not get cached.
+* [NEW] `apply_filters( 'gf_hubspot_form_incoming', $form, $formID );` Single Form Object received form HubSpot. Changes do not get cached
+* [NEW] `apply_filters( 'gf_hubspot_form_{formID}_incoming', $form );` Run immediately after gf_hubspot_form_incoming. Single Form Object received form HubSpot. Changes do not get cached. So you can specifically work on a single form (instead of potentially any)
+
+This release brought you to by request of more flexibility/access
 
 = 2.3.2 =
 * [FIX] Extra check to make sure the $response I have is an actual object. Clearly there's a larger issue at play here, though, if this is being encountered at that stage of the game? Short term solution for now. 
@@ -183,6 +191,9 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 2.3 =
+Filters galore!
 
 = 2.2 =
 New feature! Disabling Tracking Cookie is now possible on a per-feed basis.

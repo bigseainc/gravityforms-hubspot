@@ -189,6 +189,8 @@
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Forms collected from CACHE');
             }
 
+            $data = apply_filters( 'gf_hubspot_forms_incoming', $data );
+
             return $data;
         } // function
 
@@ -211,6 +213,9 @@
             else {
                 GF_Hubspot_Tracking::log(__METHOD__ . '(): Form ['.$guid.'] details collected from CACHE');
             }
+
+            $data = apply_filters( 'gf_hubspot_form_incoming', $data, $guid );
+            $data = apply_filters( 'gf_hubspot_form_'.$guid.'_incoming', $data );
 
             return $data;
         } // function

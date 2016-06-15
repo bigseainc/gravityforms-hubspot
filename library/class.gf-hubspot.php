@@ -137,7 +137,7 @@ class GF_HubSpot extends GF_HubSpot_Base {
         $data_to_hubspot = apply_filters( 'gf_hubspot_data_outgoing', $data_to_hubspot, $form, $feed );
 
         // With all of the data organized now, let's get the HubSpot call ready.
-        $hubspotutk     = $_COOKIE['hubspotutk'];
+        $hubspotutk     = isset($_COOKIE['hubspotutk']) ? $_COOKIE['hubspotutk'] : null;
         $ip_addr        = $_SERVER['REMOTE_ADDR']; //IP address too.
         $hs_context     = array(
                 'hutk'      => $hubspotutk,

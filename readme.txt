@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.6.1
-Stable tag: 2.3.3
+Stable tag: 2.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.3.4 =
+* [FIX] Sometimes, if the Label is blank from HubSpot, there's no way to determine what field is what. This resolves that by falling back to the field's slug.
 
 = 2.3.3 =
 * [NEW] `apply_filters( 'gf_hubspot_data_outgoing', $data, $GFform, $feedData );` Allows you to change the data that's being sent to HubSpot. Be mindful of formats that HubSpot expects (A list of items must be semi-colon separated, for instance). An array of Key => Value where Key is the HubSpot field slug, and the Value is what will be sent to HubSpot for that field.

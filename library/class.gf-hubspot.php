@@ -472,9 +472,13 @@ class GF_HubSpot extends GF_HubSpot_Base {
         }
 
         $response = $this->_get_form( $form_guid );
-        if ( is_object($response) && is_array($response->fields) ) : foreach ( $response->fields as $field ) : 
+        if ( is_object($response) && is_array($response->fields) ) : foreach ( $response->fields as $field ) :
+            $field_label = $field->name;
+            if (trim($field->label) != '') {
+                $field_label = $field->label;
+            }
             $output[] = array (
-                'label'     => $field->label,
+                'label'     => $field_label,
                 'name'      => $field->name,
                 'required'  => $field->required,
                 'value'     => $field->name,

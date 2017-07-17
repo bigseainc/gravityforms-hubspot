@@ -19,8 +19,23 @@ class GF_Hubspot_Hooks {
 
     public static function admin_notices () {
         $gf_hubspot = gf_hubspot();
+        $currentPage = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . strtok($_SERVER["REQUEST_URI"],'?');
 
         if ( !$gf_hubspot ) return;
+
+        if (!get_transient('gf_hubspot_oauth2_warning')) {
+            $warningTransient = "dismiss_gfhubspot_oauth_warning";
+            if (isset($_GET[$warningTransient])) {
+                // set_transient()
+            }
+            else {
+                $blogPost = "https://wordpress.org/support/topic/oauth-2-0-coming-soon/";
+                $currentPageDismiss = $currentPage . '?' . http_build_query(array_merge($_GET, array($warningTransient => 'yes')));
+                echo '<div class="notice notice-warning is-dismissible">
+                    <p><strong>HubSpot For Gravity Forms:</strong> HubSpot will be switching to oAuth 2.0 soon. Check for v3.0 of HubSpot for Gravity Forms, and be prepared! <a href="'.$blogPost.'" target="_blank" class="button button-secondary">Click here for more details</a> or <a href="'.$currentPageDismiss.'">ignore</a></p>
+                </div>';
+            }
+        }
 
         if ( !$gf_hubspot->authenticate() ) {
             echo '<div class="error">

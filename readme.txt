@@ -4,7 +4,7 @@ Donate link: http://bigseadesign.com/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.7
-Stable tag: 2.3.4
+Stable tag: 2.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 2.3.5 =
+* [NOTICE] Giving everyone a heads up to a potential site-breaking fix coming soon due to HubSpot's API changes.
 
 = 2.3.4 =
 * [FIX] Sometimes, if the Label is blank from HubSpot, there's no way to determine what field is what. This resolves that by falling back to the field's slug.

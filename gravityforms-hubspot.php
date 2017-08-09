@@ -1,11 +1,11 @@
 <?php
 	/*
 		Plugin Name: Hubspot for Gravity Forms
-		Plugin URI: http://bigseadesign.com/
+		Plugin URI: http://bigsea.co/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
 		Version: 3.0.0
 		Author: Big Sea
-		Author URI: http://bigseadesign.com
+		Author URI: http://bigsea.co
 	*/
 
     // Constants

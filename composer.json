@@ -6,12 +6,12 @@
     "authors": [
         {
             "name": "Chris Lagasse",
-            "email": "chris@bigseadesign.com"
+            "email": "chris@bigsea.co"
         }
     ],
     "minimum-stability": "stable",
     "require": {
-        "ryanwinchester/hubspot-php": "1.0"
+        "ryanwinchester/hubspot-php": "^1.0"
     },
     "autoload": {
         "psr-4": {

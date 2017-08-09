@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c48f3119a67f33b9e6cf21e9ba4ac41b",
+    "hash": "248347ea12e5f9717da49755e0a19320",
     "content-hash": "eabdc33b0a38dea8f6219e56185847ca",
     "packages": [
         {
@@ -240,16 +240,16 @@
         },
         {
             "name": "ryanwinchester/hubspot-php",
-            "version": "v1.0.4",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ryanwinchester/hubspot-php.git",
-                "reference": "f620bac70bde7143d55823ad93ddf6aebc36dff4"
+                "reference": "17668af4cb02c95fe9f5306a0477dfe63de59096"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ryanwinchester/hubspot-php/zipball/f620bac70bde7143d55823ad93ddf6aebc36dff4",
-                "reference": "f620bac70bde7143d55823ad93ddf6aebc36dff4",
+                "url": "https://api.github.com/repos/ryanwinchester/hubspot-php/zipball/17668af4cb02c95fe9f5306a0477dfe63de59096",
+                "reference": "17668af4cb02c95fe9f5306a0477dfe63de59096",
                 "shasum": ""
             },
             "require": {
@@ -286,7 +286,7 @@
                 "api",
                 "hubspot"
             ],
-            "time": "2017-05-16 16:51:53"
+            "time": "2017-08-08 20:30:55"
         }
     ],
     "packages-dev": [],

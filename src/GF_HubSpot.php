@@ -18,7 +18,7 @@ class GF_HubSpot extends Base {
     protected $_slug = 'gravityforms-hubspot';
     protected $_path = 'gravityforms-hubspot/gravityforms-hubspot.php';
     protected $_full_path = __FILE__;
-    protected $_url = 'http://bigseadesign.com';
+    protected $_url = 'http://bigsea.co';
     protected $_title = 'Gravity Forms HubSpot Add-On';
     protected $_short_title = 'HubSpot';
     protected $_enable_rg_autoupgrade = false;

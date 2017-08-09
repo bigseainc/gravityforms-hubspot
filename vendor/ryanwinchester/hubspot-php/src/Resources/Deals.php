@@ -138,13 +138,16 @@ class Deals extends Resource
     
     /**
      * @param int $contactId
+     * @param array $params Optional parameters ['limit', 'offset']
      * @return mixed
      */
-    function associatedWithContact($contactId)
+    function associatedWithContact($contactId, $params = [])
     {
-        $endpoint = "https://api.hubapi.com/deals/v1/deal/associated/contact/{$contactId}";
+        $endpoint = "https://api.hubapi.com/deals/v1/deal/associated/contact/{$contactId}/paged";
 
-        return $this->client->request('get', $endpoint);
+        $queryString = build_query_string($params);
+
+        return $this->client->request('get', $endpoint, [], $queryString);
     }
 
     /**
@@ -159,5 +162,22 @@ class Deals extends Resource
         $queryString = build_query_string(['id' => (array)$contactIds]);
 
         return $this->client->request('delete', $endpoint, [], $queryString);
+    }
+
+    /**
+     * @param string $objectType
+     * @param int $objectId
+     * @param array $params
+     * @return \Psr\Http\Message\ResponseInterface|\SevenShores\Hubspot\Http\Response
+     *
+     * @see https://developers.hubspot.com/docs/methods/deals/get-associated-deals
+     */
+    public function getAssociatedDeals($objectType, $objectId, $params = [])
+    {
+        $endpoint = "https://api.hubapi.com/deals/v1/deal/associated/{$objectType}/{$objectId}/paged";
+
+        $queryString = build_query_string($params);
+
+        return $this->client->request('get', $endpoint, [], $queryString);
     }
 }

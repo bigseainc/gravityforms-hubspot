@@ -226,7 +226,7 @@ class GF_HubSpot extends Base {
             'forms',
             'contacts',
         );
-        $authorize_url = $this->hubspot->oauth2()->getAuthUrl(GF_HUBSPOT_CLIENT_ID, $this->getRedirectURI(), $scopes);
+        $authorize_url = $this->hubspot->oAuth2()->getAuthUrl(GF_HUBSPOT_CLIENT_ID, $this->getRedirectURI(), $scopes);
    
         echo '<a class="button" href="'.$authorize_url.'">Click Here to Authenticate</a>';
 

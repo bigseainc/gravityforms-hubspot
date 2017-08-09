@@ -53,7 +53,7 @@ class Base extends \GFFeedAddOn {
           throw new \Exception('Missing HubSpot');
         }
 
-        $oauth = $this->hubspot->oauth2();
+        $oauth = $this->hubspot->oAuth2();
 
         $receivedToken = null;
         try {
@@ -116,7 +116,7 @@ class Base extends \GFFeedAddOn {
             }
 
             $this->getHubSpot();
-            $tokenDetails = $this->hubspot->oauth2()->getAccessTokenInfo($token);
+            $tokenDetails = $this->hubspot->oAuth2()->getAccessTokenInfo($token);
         } catch (\Exception $e) {
             Tracking::log('Could not get Token Information', $token, $e->getMessage());
             return null;

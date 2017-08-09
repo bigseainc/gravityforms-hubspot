@@ -69,8 +69,8 @@ We kept the API Key feature in earlier versions of our plugin as a "just in case
 == Changelog ==
 
 = 3.0.0 =
-* Support for HubSpot's switch to oAuth 2.0
-* Added minimum system requirements. Complete overhaul of structure into a Composer library.
+* [NEW] Support for HubSpot's switch to oAuth 2.0
+* [NOTICE] Added minimum system requirements. Complete overhaul of structure into a Composer library.
 
 = 2.3.5 =
 * [NOTICE] Giving everyone a heads up to a potential site-breaking fix coming soon due to HubSpot's API changes.
@@ -219,8 +219,9 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 
 == Upgrade Notice ==
 
-= 3.0 =
-Support for HubSpot's new oAuth 2.0
+= 3.0.0 =
+Support for HubSpot's new oAuth 2.0, Minimum requirements PHP5.5 and SSL Certificate
+After updating, you will need to re-authenticate your HubSpot account.
 
 = 2.3 =
 Filters galore!

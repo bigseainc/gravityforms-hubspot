@@ -1,0 +1,21 @@
+{
+    "name": "big-sea/gf-hubspot",
+    "description": "HubSpot for Gravity Forms",
+    "type": "project",
+    "license": "UNLICENSED",
+    "authors": [
+        {
+            "name": "Chris Lagasse",
+            "email": "chris@bigsea.co"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "ryanwinchester/hubspot-php": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BigSea\\GFHubSpot\\": "src/"
+        }
+    }
+}

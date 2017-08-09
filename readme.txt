@@ -1,10 +1,10 @@
 === HubSpot for Gravity Forms ===
 Contributors: Big Sea, Soben, bloqhead
-Donate link: http://bigseadesign.com/
+Donate link: http://bigsea.co/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
-Tested up to: 4.7
-Stable tag: 2.3.5
+Tested up to: 4.8.1
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,12 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 * Authenticate using oAuth
 * Create a form in HubSpot with fields that match all (or any part) of your fields in Gravity Forms
-* Profit! 
+* Profit!
+
+*Minimum System Requirements*
+
+* PHP 5.5 or greater
+* SSL Certificate
 
 == Installation ==
 
@@ -32,15 +37,27 @@ If you’ve got a WordPress site that uses Gravity Forms, you’ve probably alre
 
 = Is my Hub ID required? =
 
-Yes. Your Hub ID is required to connect to oAuth, and for including the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot Tracking Code for Wordpress", their official plugin, already includes analytics*, and/or some theme developers will have already included it in your code)
+No. Your HubSpot Hub ID is only required if you are using our plugin to include the Analytics Tracking javascript, if you check the box for us to provide it (*"HubSpot Tracking Code for Wordpress", their official plugin, already includes analytics*, and/or some theme developers will have already included it in your code)
 
 = Where do I find my HubSpot Hub ID? =
 
 After logging into your account on HubSpot.com, your Hub ID can be found with the product version at the bottom of your HubSpot Dashboard in the footer, or by looking at the Top Left corner of the screen.
 
+= What field types are supported? or Why does my X field not carry over to HubSpot? =
+
 We currently only support "date", "string", and "enumeration" types from HubSpot, but we'll work on adding more in the future.
 
 "Enumeration" type is the HubSpot format for multiple checkboxes, and similar fields of collection multiple pieces of data at once in a single field.
+
+= Why do you now have minimum system requirements? =
+
+HubSpot's PHP based library is deprecated, and does not support HubSpot's new oAuth 2.0 standard. We chose to switch to an existing PHP library that does support oAuth 2.0, but this library uses new PHP features that are only available in PHP 5.5 and above.
+
+On top of that, HubSpot's oAuth 2.0 connectivity REQUIRES a secured URL to redirect back to, for added security. As we do not handle your authentication request and it happens purely within the plugin itself, your website now requires an SSL certificate.
+
+= What happened to my ability to use an API Key? =
+
+We kept the API Key feature in earlier versions of our plugin as a "just in case"... HubSpot's switch to oAuth 2.0 required such an overhaul of the plugin, that we have chosen to drop support for it.
 
 == Screenshots ==
 
@@ -50,6 +67,10 @@ We currently only support "date", "string", and "enumeration" types from HubSpot
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 3.0.0 =
+* [NEW] Support for HubSpot's switch to oAuth 2.0
+* [NOTICE] Added minimum system requirements. Complete overhaul of structure into a Composer library.
 
 = 2.3.5 =
 * [NOTICE] Giving everyone a heads up to a potential site-breaking fix coming soon due to HubSpot's API changes.
@@ -197,6 +218,10 @@ Thanks to Wordpress.org user "anu" for finding and debugging these issues. (http
 * Tracking Analytics can be included in footer, if requested
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+Support for HubSpot's new oAuth 2.0, Minimum requirements PHP5.5 and SSL Certificate
+After updating, you will need to re-authenticate your HubSpot account.
 
 = 2.3 =
 Filters galore!

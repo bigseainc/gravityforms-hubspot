@@ -7,6 +7,7 @@ define('GF_HUBSPOT_CLIENT_ID', 'bc2af989-d201-11e3-9bdd-cfa2d230ed01');
 define('GF_HUBSPOT_CLIENT_SECRET', '9e931048-3baf-4786-9ce2-3227adec020a');
 
 // Actions
+add_action('init', array('\BigSea\GFHubSpot\Hooks', 'check_for_token_refresh'), 1);
 add_action('admin_init', array('\BigSea\GFHubSpot\Hooks', 'check_for_oauth_response'), 1);
 add_action('admin_notices', array('\BigSea\GFHubSpot\Hooks', 'admin_notices'));
 
@@ -220,11 +221,11 @@ class GF_HubSpot extends Base {
     } // function
 
     public function settings_oauth_validation () {
+        $this->getHubSpot();
         $scopes = array (
             'forms',
             'contacts',
         );
-
         $authorize_url = $this->hubspot->oauth2()->getAuthUrl(GF_HUBSPOT_CLIENT_ID, $this->getRedirectURI(), $scopes);
    
         echo '<a class="button" href="'.$authorize_url.'">Click Here to Authenticate</a>';

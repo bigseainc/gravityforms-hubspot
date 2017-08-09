@@ -14,7 +14,7 @@ class Base extends \GFFeedAddOn {
     public function getHubSpot ()
     {
         if (!$this->hubspot) {
-            $token = null;
+            $token = GF_HUBSPOT_CLIENT_ID;
             $storedToken = $this->getToken();
             if (is_array($storedToken)) {
                 $token = $storedToken['access_token'];
@@ -60,6 +60,7 @@ class Base extends \GFFeedAddOn {
             switch ($grantType) {
               case 'authorization_code' :
                 $receivedToken = $oauth->getTokensByCode(GF_HUBSPOT_CLIENT_ID, GF_HUBSPOT_CLIENT_SECRET, $this->getRedirectURI(), $originalToken);
+
                 break;
               case 'refresh_token' :
               default :
@@ -67,7 +68,8 @@ class Base extends \GFFeedAddOn {
                 break;
             }
         } catch (\Exception $e) {
-            Tracking::log('Could not get Token', $e->getMessage());
+            Tracking::log('Could not update Token', $e->getMessage());
+            $this->updateSetting(self::TOKEN_SETTING_FIELD, null);
             return false;
         }
 
@@ -106,9 +108,6 @@ class Base extends \GFFeedAddOn {
         try {
             if (!$token) {
                 $token = $this->getToken();
-                if (!$token || !isset($token['refresh_token']) || !$token['refresh_token']) {
-                    throw new \Exception('Refresh Token Missing');
-                }
                 $token = $token['access_token'];
             }
 

@@ -26,12 +26,27 @@ class Hooks {
     } // function
 
 
+    public static function check_for_token_refresh () {
+        $gf_hubspot = gf_hubspot();
+
+        $tokenData = $gf_hubspot->getToken();
+        if ($tokenData && isset($tokenData['refresh_token'])) {
+            if (time() >= $tokenData['bsd_expires_in']) {
+                Tracking::log('Token being refreshed');
+                $gf_hubspot->refreshOAuthToken($tokenData['refresh_token']);
+            }
+        }
+    } // function
+
+
     public static function check_for_oauth_response () {
 
         if ( isset($_GET['code']) && $_GET['trigger'] == 'hubspot_oauth' ) {
             // Get the token, and store it.
             $gf_hubspot = gf_hubspot();
             $gf_hubspot->getTokenFromAuthorizationCode($_GET['code']);
+            wp_redirect( $gf_hubspot->getRedirectURI() );
+            exit;
         } // endif
     } // function
 
@@ -39,7 +54,7 @@ class Hooks {
     public static function addAnalyticsToFooter () {
         $gf_hubspot = gf_hubspot();
 
-        if ($hub_id = $gf_hubspot->getSetting('hub_id')) {
+        if ($hub_id = $gf_hubspot->getSetting('hub_id') && strlen($hub_id) > 0) {
             if ( !is_admin() ) {
                 ?>
                 <!-- Start of Async HubSpot Analytics Code -->

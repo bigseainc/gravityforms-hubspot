@@ -4,7 +4,7 @@ Donate link: http://bigsea.co/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.8.1
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,10 @@ We kept the API Key feature in earlier versions of our plugin as a "just in case
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 3.0.1 =
+* [FIX] Cache file had PHP error
+* [FIX] Fixed issue in which token would get lost during save action for Analytics.
 
 = 3.0.0 =
 * [NEW] Support for HubSpot's switch to oAuth 2.0

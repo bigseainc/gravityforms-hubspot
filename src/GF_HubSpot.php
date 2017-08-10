@@ -234,7 +234,7 @@ class GF_HubSpot extends Base {
         $this->settings_hidden(
             array(
                 'default_value' => null,
-                'name'          => 'token_oauth'
+                'name'          => 'token_oauth2'
             )
         );
 

@@ -42,7 +42,7 @@ class Manifest {
     private function _processManifest () {
         $handle = @fopen( $this->_manifestFile, 'r' );
         if ( !$handle ) {
-            BigSea\GFHubSpot\Tracking::log('Caching is not Enabled. Folder is not writable.');
+            \BigSea\GFHubSpot\Tracking::log('Caching is not Enabled. Folder is not writable.');
             return false;
         }
 

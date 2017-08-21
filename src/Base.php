@@ -111,7 +111,7 @@ class Base extends \GFFeedAddOn {
                 $token = $token['access_token'];
             }
 
-            if ($this->tokenDetailsCache[$token]) {
+            if (isset($this->tokenDetailsCache[$token])) {
                 return $this->tokenDetailsCache[$token];
             }
 

@@ -3,7 +3,7 @@
 		Plugin Name: Hubspot for Gravity Forms
 		Plugin URI: http://bigsea.co/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 3.0.1
+		Version: 3.0.2
 		Author: Big Sea
 		Author URI: http://bigsea.co
 	*/
@@ -11,7 +11,8 @@
     // Constants
     define('GF_HUBSPOT_BASENAME', plugin_basename(__FILE__));
     define('GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
-    define('GF_HUBSPOT_VERSION', '3.0.1');
+    define('GF_HUBSPOT_VERSION', '3.0.2');
+    if ( !defined('GF_HUBSPOT_DEBUG') ) define('GF_HUBSPOT_DEBUG', false);
 
     // Start up the plugin after GravityForms is loaded.
     add_action( 'gform_loaded', array( 'GF_HubSpot_Bootstrap', 'load' ), 5 );
@@ -22,12 +23,38 @@
 
     class GF_HubSpot_Bootstrap {
 
-        public static function load(){
-            // Let's get rolling!
-            require_once( GF_HUBSPOT_PATH . 'vendor/autoload.php' );
-            // BigSea\GFHubSpot\Tracking::log('Plugin Booted Up');
-            GFAddOn::register( '\BigSea\GFHubSpot\GF_HubSpot' );
+        const MESSAGE_REQUIRED = 'HubSpot for Gravity Forms requires PHP 5.5 or newer, with cURL enabled.';
+
+        public static function load() {
+            if (self::meetsMinimumRequirements()) {
+                // Let's get rolling!
+                require_once( GF_HUBSPOT_PATH . 'vendor/autoload.php' );
+                // BigSea\GFHubSpot\Tracking::log('Plugin Booted Up');
+                GFAddOn::register( '\BigSea\GFHubSpot\GF_HubSpot' );
+            } else {
+                add_action( 'admin_notices', array('GF_HubSpot_Bootstrap', 'adminNotices') );
+            }
         } // function
+
+        private static function meetsMinimumRequirements() {
+            if (version_compare(PHP_VERSION, '5.5.0', "<")) {
+                return false;
+            }
+
+            if (!function_exists('curl_reset')) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static function adminNotices() {
+            if (!self::meetsMinimumRequirements()) {
+                echo '<div class="notice notice-error">
+                    <p>'.self::MESSAGE_REQUIRED.'</p>
+                </div>';
+            }
+        }
 
         /**
          *  activate ()
@@ -38,6 +65,11 @@
          *  @return boolean
          */
         public static function activate () {
+            if (!self::meetsMinimumRequirements()) {
+                deactivate_plugins( plugin_basename( __FILE__ ) );
+                wp_die( self::MESSAGE_REQUIRED );
+            }
+
             $old_version = get_option('gf_bsdhubspot_plugin_version');
             if ( $old_version === FALSE ) $old_version = GF_HUBSPOT_VERSION; // We don't need to migrate, they've never installed.
 

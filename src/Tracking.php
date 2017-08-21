@@ -6,7 +6,6 @@ $upload_dir = wp_upload_dir();
 
 // Constants that can be controlled by each individual site.
 // @todo return these to false
-if ( !defined('GF_HUBSPOT_DEBUG') ) define('GF_HUBSPOT_DEBUG', false);
 if ( !defined('GF_HUBSPOT_DEBUG_ECHO') ) define('GF_HUBSPOT_DEBUG_ECHO', false);
 if ( !defined('GF_HUBSPOT_DEBUG_LOG_PATH') ) define('GF_HUBSPOT_DEBUG_LOG_PATH', $upload_dir['basedir']);
 

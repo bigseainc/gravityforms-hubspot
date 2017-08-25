@@ -54,7 +54,9 @@ class Hooks {
     public static function addAnalyticsToFooter () {
         $gf_hubspot = gf_hubspot();
 
-        if ($hub_id = $gf_hubspot->getSetting('hub_id') && strlen($hub_id) > 0) {
+        $hub_id = $gf_hubspot->getSetting('hub_id');
+
+        if ($hub_id && strlen($hub_id) > 0) {
             if ( !is_admin() ) {
                 ?>
                 <!-- Start of Async HubSpot Analytics Code -->

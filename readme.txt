@@ -4,7 +4,7 @@ Donate link: http://bigsea.co/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.8.1
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,9 @@ We kept the API Key feature in earlier versions of our plugin as a "just in case
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 3.0.3 =
+* [FIX] PHP warning when including HubSpot analytics is now resolved. (kudos mattkeys for finding [and resolving] this)
 
 = 3.0.2 =
 * [FIX] Minor PHP warnings related to missing constants, and not properly checking `isset`

@@ -200,7 +200,7 @@ class Base extends \GFFeedAddOn {
         return $formsResponse;
     } // function
 
-    protected function getHubSpotContextCookie($form) {
+    protected function getHubSpotContextCookie($form, $feed) {
         $hubspotutk     = isset($_COOKIE['hubspotutk']) ? $_COOKIE['hubspotutk'] : null;
         $ip_addr        = $_SERVER['REMOTE_ADDR']; //IP address too.
         $hs_context     = array(

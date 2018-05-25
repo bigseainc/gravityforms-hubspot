@@ -327,7 +327,7 @@ class GF_HubSpot extends Base {
         $conditional_fields = array(
             'title'      => __( 'Feed Conditional Logic', 'gravityforms-hubspot' ),
             'name' => 'conditionaLogic',
-            'dependency' => array( $this, 'show_conditional_logic_field' ),
+            'dependency' => array( 'field' => 'formID', 'values' => '_notempty_' ),
             'fields'     => array(
                 array(
                     'name'    => 'conditionalLogic',
@@ -340,28 +340,6 @@ class GF_HubSpot extends Base {
 
         return array ( $base_fields, $form_fields, $conditional_fields );
         
-    } // function
-
-    /**
-     * Set custom dependency for conditional logic.
-     * 
-     * @access public
-     * @return bool
-     */
-    public function show_conditional_logic_field() {
-        
-        /* Get current feed. */
-        $feed = $this->get_current_feed();
-        
-        /* Get posted settings. */
-        $posted_settings = $this->get_posted_settings();
-        
-        /* Show if an action is chosen */
-        if ( rgar( $posted_settings, 'formID' ) != '' ) {
-            return true;
-        }
-        
-        return false;
     } // function
 
     /**

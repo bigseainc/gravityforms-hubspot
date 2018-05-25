@@ -320,6 +320,7 @@ class GF_HubSpot extends Base {
         $form_fields = array (
             'title' => __( 'Form Connections', 'gravityforms-hubspot' ),
             'name' => 'formConnections',
+            'description' => $this->show_form_specific_notices(),
             'dependency' => array( 'field' => 'formID', 'values' => '_notempty_' ),
             'fields' => array (
                 array(
@@ -350,6 +351,33 @@ class GF_HubSpot extends Base {
         return array ( $base_fields, $form_fields, $conditional_fields );
         
     } // function
+
+    public function show_form_specific_notices()
+    {
+        $form_guid = $this->_get_feed_current_form_id ();
+        if ( !$this->authenticateHubSpot() ) {
+            return '';
+        }
+
+        ob_start();
+            $response = $this->_getForm( $form_guid );
+            if ( is_object($response) && isset($response->redirect) && $response->redirect != '' ) {
+                echo '
+                    <p class="gfhubspot-alert">
+                        Some forms can have conflicts with this plugin if the Hubspot form is set to redirct to another page. Your form is currently configured to redirect to "'.$response->redirect.'." After completing the feed, please test your form to confirm it submits successfully.
+                        <br/><br/>
+                        If you have issues submitting, we recommend setting Hubspot to show a "Message" upon form submission, and using Gravity Forms to handle the redirect.
+                    </p>
+                ';
+            }
+
+        $response = $this->_getForm( $form_guid );
+
+        $warnings = ob_get_contents();
+        ob_end_clean();
+
+        return $warnings;
+    }
 
     /**
         FEED LIST

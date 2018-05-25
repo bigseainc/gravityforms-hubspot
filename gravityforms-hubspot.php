@@ -3,7 +3,7 @@
 		Plugin Name: Hubspot for Gravity Forms
 		Plugin URI: http://bigsea.co/
 		Description: Easily integrate your Gravity Forms with HubSpot forms! Match up field-for-field so you can harness the power of HubSpot.
-		Version: 3.1
+		Version: 4.0
 		Author: Big Sea
 		Author URI: http://bigsea.co
 	*/
@@ -11,7 +11,7 @@
     // Constants
     define('GF_HUBSPOT_BASENAME', plugin_basename(__FILE__));
     define('GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
-    define('GF_HUBSPOT_VERSION', '3.1');
+    define('GF_HUBSPOT_VERSION', '4.0');
     if ( !defined('GF_HUBSPOT_DEBUG') ) define('GF_HUBSPOT_DEBUG', false);
 
     // Start up the plugin after GravityForms is loaded.

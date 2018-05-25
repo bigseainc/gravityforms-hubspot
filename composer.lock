@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "248347ea12e5f9717da49755e0a19320",
     "content-hash": "eabdc33b0a38dea8f6219e56185847ca",
     "packages": [
         {
@@ -70,7 +69,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-06-22 18:50:49"
+            "time": "2017-06-22T18:50:49+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -121,7 +120,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20 10:07:11"
+            "time": "2016-12-20T10:07:11+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -186,7 +185,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20 17:10:46"
+            "time": "2017-03-20T17:10:46+00:00"
         },
         {
             "name": "psr/http-message",
@@ -236,20 +235,20 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06 14:39:51"
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "ryanwinchester/hubspot-php",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ryanwinchester/hubspot-php.git",
-                "reference": "17668af4cb02c95fe9f5306a0477dfe63de59096"
+                "reference": "18755dbeff7b63f5436a35aa23ad6b1925bf6856"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ryanwinchester/hubspot-php/zipball/17668af4cb02c95fe9f5306a0477dfe63de59096",
-                "reference": "17668af4cb02c95fe9f5306a0477dfe63de59096",
+                "url": "https://api.github.com/repos/ryanwinchester/hubspot-php/zipball/18755dbeff7b63f5436a35aa23ad6b1925bf6856",
+                "reference": "18755dbeff7b63f5436a35aa23ad6b1925bf6856",
                 "shasum": ""
             },
             "require": {
@@ -286,7 +285,7 @@
                 "api",
                 "hubspot"
             ],
-            "time": "2017-08-08 20:30:55"
+            "time": "2017-10-16T17:22:18+00:00"
         }
     ],
     "packages-dev": [],

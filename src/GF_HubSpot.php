@@ -145,28 +145,37 @@ class GF_HubSpot extends Base {
         $data_to_hubspot['hs_context'] = json_encode($this->getHubSpotContextCookie($form, $feed));
 
         // Try to send the form.
-        $result = $this->hubspot->forms()->submit($this->getPortalID(), $form_id, $data_to_hubspot);
-        $status_code = $result->getStatusCode();
+        try {
+            $result = $this->hubspot->forms()->submit($this->getPortalID(), $form_id, $data_to_hubspot);
+            $status_code = $result->getStatusCode();
 
-        if ( in_array($status_code, array(200, 204, 302)) ) {
-            // Success!
-            // 200 - they don't use, but watching anyways.
-            // 204 - success and nothing returned
-            // 302 - success, but including a redirect (we're ignoring)
+            if ( in_array($status_code, array(200, 204, 302)) ) {
+                // Success!
+                // 200 - they don't use, but watching anyways.
+                // 204 - success and nothing returned
+                // 302 - success, but including a redirect (we're ignoring)
 
-            Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
-            return;
+                Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
+                return;
+            }
+
+            // Shouldn't make it here, but if we do, let's log it.
+            Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result, $status_code);
+            $this->add_feed_error( 
+                'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
+                $feed, 
+                $entry,
+                $form 
+            );
+        } catch (\Exception $e) {
+            Tracking::log(__METHOD__ . '(): Form Submission Failed ['.$form_id.']', $e->getMessage());
+            $this->add_feed_error( 
+                'HubSpot caused an unknown error for "'.$hubspot_form->name.'" ['.$form_id.']: ' . $e->getMessage(), 
+                $feed,
+                $entry,
+                $form 
+            );
         }
-
-        // Shouldn't make it here, but if we do, let's log it.
-        Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result, $status_code);
-        $this->add_feed_error( 
-            'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
-            $feed, 
-            $entry,
-            $form 
-        );
-
     } // function
 
     /**

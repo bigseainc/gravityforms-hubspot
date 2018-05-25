@@ -96,6 +96,10 @@ class GF_HubSpot extends Base {
      * @return void
      */
     public function process_feed( $feed, $entry, $form ) {
+        if (apply_filters( 'gf_hubspot_conditional_not_met', false, $feed, $entry, $form)) {
+            return;
+        }
+        
         $feed = apply_filters( 'gf_hubspot_process_feed', $feed, $entry, $form );
 
         // Make sure we have a fresh connection.
@@ -117,6 +121,8 @@ class GF_HubSpot extends Base {
                     continue;
                 }
 
+                $gf_field = \GFFormsModel::get_field( $form, $fieldMap[$field->name]);
+
                 $gf_field_value = $this->get_field_value( $form, $entry, $fieldMap[$field->name] );
                 if ( $field->required && !$gf_field_value ) {
                     Tracking::log(__METHOD__ . '(): Required field "'.$field->label.'" missing.', $field, $gf_field_value);
@@ -129,38 +135,47 @@ class GF_HubSpot extends Base {
                     return;
                 }
 
-                $data_to_hubspot[$field->name] = $this->_get_field_formatted_for_hubspot($field->type, $gf_field_value);
+                $data_to_hubspot[$field->name] = $this->_get_field_formatted_for_hubspot($field->type, $gf_field_value, $gf_field);
             }
         }
-
+        
         $data_to_hubspot = apply_filters( 'gf_hubspot_data_outgoing', $data_to_hubspot, $form, $feed );
 
         // With all of the data organized now, let's get the HubSpot call ready.
         $data_to_hubspot['hs_context'] = json_encode($this->getHubSpotContextCookie($form, $feed));
 
         // Try to send the form.
-        $result = $this->hubspot->forms()->submit($this->getPortalID(), $form_id, $data_to_hubspot);
-        $status_code = $result->getStatusCode();
+        try {
+            $result = $this->hubspot->forms()->submit($this->getPortalID(), $form_id, $data_to_hubspot);
+            $status_code = $result->getStatusCode();
 
-        if ( in_array($status_code, array(200, 204, 302)) ) {
-            // Success!
-            // 200 - they don't use, but watching anyways.
-            // 204 - success and nothing returned
-            // 302 - success, but including a redirect (we're ignoring)
+            if ( in_array($status_code, array(200, 204, 302)) ) {
+                // Success!
+                // 200 - they don't use, but watching anyways.
+                // 204 - success and nothing returned
+                // 302 - success, but including a redirect (we're ignoring)
 
-            Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
-            return;
+                Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
+                return;
+            }
+
+            // Shouldn't make it here, but if we do, let's log it.
+            Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result, $status_code);
+            $this->add_feed_error( 
+                'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
+                $feed, 
+                $entry,
+                $form 
+            );
+        } catch (\Exception $e) {
+            Tracking::log(__METHOD__ . '(): Form Submission Failed ['.$form_id.']', $e->getMessage());
+            $this->add_feed_error( 
+                'HubSpot caused an unknown error for "'.$hubspot_form->name.'" ['.$form_id.']: ' . $e->getMessage(), 
+                $feed,
+                $entry,
+                $form 
+            );
         }
-
-        // Shouldn't make it here, but if we do, let's log it.
-        Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result, $status_code);
-        $this->add_feed_error( 
-            'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
-            $feed, 
-            $entry,
-            $form 
-        );
-
     } // function
 
     /**
@@ -261,10 +276,13 @@ class GF_HubSpot extends Base {
      * @return array
      */
     public function feed_settings_fields() {
+
+        $settings = parent::feed_settings_fields();
         
         // Build base fields array.
         $base_fields = array(
             'title'  => '',
+            'name' => 'baseFields',
             'fields' => array(
                 array(
                     'name'           => 'feedName',
@@ -301,6 +319,8 @@ class GF_HubSpot extends Base {
         // Build form fields array
         $form_fields = array (
             'title' => __( 'Form Connections', 'gravityforms-hubspot' ),
+            'name' => 'formConnections',
+            'description' => $this->show_form_specific_notices(),
             'dependency' => array( 'field' => 'formID', 'values' => '_notempty_' ),
             'fields' => array (
                 array(
@@ -316,46 +336,48 @@ class GF_HubSpot extends Base {
         // Build conditional logic fields array.
         $conditional_fields = array(
             'title'      => __( 'Feed Conditional Logic', 'gravityforms-hubspot' ),
-            'dependency' => array( $this, 'show_conditional_logic_field' ),
+            'name' => 'conditionaLogic',
+            'dependency' => array( 'field' => 'formID', 'values' => '_notempty_' ),
             'fields'     => array(
                 array(
-                    'name'           => 'feedCondition',
-                    'type'           => 'feed_condition',
-                    'label'          => __( 'Conditional Logic', 'gravityforms-hubspot' ),
-                    'checkbox_label' => __( 'Enable', 'gravityforms-hubspot' ),
-                    'instructions'   => __( 'Export to HubSpot if', 'gravityforms-hubspot' ),
-                    'tooltip'        => '<h6>' . __( 'Conditional Logic', 'gravityforms-hubspot' ) . '</h6>' . __( 'When conditional logic is enabled, form submissions will only be exported to HubSpot when the condition is met. When disabled, all form submissions will be posted.', 'gravityforms-hubspot' )
-                ),
-                
-            )
+                    'name'    => 'conditionalLogic',
+                    'label'   => esc_html__( 'Conditional Logic', 'gravityforms' ),
+                    'type'    => 'feed_condition',
+                    'tooltip' => '<h6>' . esc_html__( 'Conditional Logic', 'gravityforms' ) . '</h6>' . esc_html__( 'When conditions are enabled, form submissions will only be sent to the payment gateway when the conditions are met. When disabled, all form submissions will be sent to the payment gateway.', 'gravityforms' )
+                ),   
+            ),
         );
 
-        // @todo add Conditional ability to the Feeds
-        return array ( $base_fields, $form_fields);//, $conditional_fields );
+        return array ( $base_fields, $form_fields, $conditional_fields );
         
     } // function
 
-    /**
-     * Set custom dependency for conditional logic.
-     * 
-     * @access public
-     * @return bool
-     */
-    public function show_conditional_logic_field() {
-        
-        /* Get current feed. */
-        $feed = $this->get_current_feed();
-        
-        /* Get posted settings. */
-        $posted_settings = $this->get_posted_settings();
-        
-        /* Show if an action is chosen */
-        if ( rgar( $posted_settings, 'formID' ) != '' ) {
-            return true;        
+    public function show_form_specific_notices()
+    {
+        $form_guid = $this->_get_feed_current_form_id ();
+        if ( !$this->authenticateHubSpot() ) {
+            return '';
         }
-        
-        return false;
-    } // function
+
+        ob_start();
+            $response = $this->_getForm( $form_guid );
+            if ( is_object($response) && isset($response->redirect) && $response->redirect != '' ) {
+                echo '
+                    <p class="gfhubspot-alert">
+                        Some forms can have conflicts with this plugin if the Hubspot form is set to redirct to another page. Your form is currently configured to redirect to "'.$response->redirect.'." After completing the feed, please test your form to confirm it submits successfully.
+                        <br/><br/>
+                        If you have issues submitting, we recommend setting Hubspot to show a "Message" upon form submission, and using Gravity Forms to handle the redirect.
+                    </p>
+                ';
+            }
+
+        $response = $this->_getForm( $form_guid );
+
+        $warnings = ob_get_contents();
+        ob_end_clean();
+
+        return $warnings;
+    }
 
     /**
         FEED LIST
@@ -472,7 +494,9 @@ class GF_HubSpot extends Base {
     } // function
 
 
-    private function _get_field_formatted_for_hubspot ( $hs_field_type, $data ) {
+    private function _get_field_formatted_for_hubspot ( $hs_field_type, $data, $gf_field ) {
+        $data = $this->preParseGravityFormData($data, $gf_field);
+
         switch ( $hs_field_type ) {
             case 'date' :
                 return strtotime($data) * 1000;
@@ -492,5 +516,18 @@ class GF_HubSpot extends Base {
                 return $data;
         }
     } // function
+
+    /**
+     * preParseGravityFormData
+     * 
+     *  We know that some of the data types coming from Gravity Forms will need to be manipulated. 
+     *      In this case, we're converting the Field type into a semi-colon separated string.
+     */
+    private function preParseGravityFormData($data, $gf_field)
+    {
+        // Currently does nothing. We have no special situations to worry about.
+
+        return $data;
+    }
 
 } // class

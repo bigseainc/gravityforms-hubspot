@@ -3,7 +3,7 @@ Contributors: Big Sea, Soben, bloqhead
 Donate link: http://bigsea.co/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
-Tested up to: 4.8.1
+Tested up to: 4.9.6
 Stable tag: 4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

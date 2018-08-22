@@ -161,6 +161,7 @@ class GF_HubSpot extends Base {
                 // 302 - success, but including a redirect (we're ignoring)
 
                 Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
+                $this->log_debug('HubSpot accepted the form submission.');
                 do_action('gf_hubspot_process_success', $data_to_hubspot, $form, $feed);
                 return;
             }
@@ -169,7 +170,7 @@ class GF_HubSpot extends Base {
             Tracking::log(__METHOD__ . '(): Form Feed could not be sent to HubSpot ['.$form_id.']', $result, $status_code);
             $this->add_feed_error( 
                 'HubSpot rejected the submission with an error '.$status_code.' for "'.$hubspot_form->name.'" ['.$form_id.'].', 
-                $feed, 
+                $feed,
                 $entry,
                 $form 
             );
@@ -312,14 +313,14 @@ class GF_HubSpot extends Base {
                     'label'          => __( 'Additional Options', 'gravityforms-hubspot' ),
                     'type'           => 'checkbox',
                     'choices'        => array(
-                                         array(
-                                             'label'         => 'Disable Cookie Tracking',
-                                             'name'          => 'disableCookie',
-                                             'tooltip'       => '<h6>'. __( 'Disable Cookie', 'gravityforms-hubspot' ) .'</h6>' . __( 'When disabled, every submission from the same browser creates a new contact.', 'gravityforms-hubspot' ),
-                                             'default_value' => 0,
+                                            array(
+                                                'label'         => 'Disable Cookie Tracking',
+                                                'name'          => 'disableCookie',
+                                                'tooltip'       => '<h6>'. __( 'Disable Cookie', 'gravityforms-hubspot' ) .'</h6>' . __( 'When disabled, every submission from the same browser creates a new contact.', 'gravityforms-hubspot' ),
+                                                'default_value' => 0,
 
-                                         ),
-                                    )
+                                            ),
+                                        )
                 )
             )
         );

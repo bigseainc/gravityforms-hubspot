@@ -108,6 +108,10 @@ class GF_HubSpot extends Base {
         // Let's get the HubSpot Form!
         $form_id = rgars ( $feed, 'meta/formID' );
         $hubspot_form = $this->_getForm( $form_id );
+        if (!is_object($hubspot_form) || !isset($hubspot_form->name)) {
+            Tracking::log(__METHOD__ . '(): Invalid Form "'.$form_id.'"');
+            return;
+        }
         
         // We are definitely in a good ground moving forward!
         Tracking::log(__METHOD__ . '(): Feed Processing for Form "'.$hubspot_form->name.'" ('.$form_id.')');
@@ -135,7 +139,8 @@ class GF_HubSpot extends Base {
                     return;
                 }
 
-                $data_to_hubspot[$field->name] = $this->_get_field_formatted_for_hubspot($field->type, $gf_field_value, $gf_field);
+                $currentDataParsed = $this->_get_field_formatted_for_hubspot($field->type, $gf_field_value, $gf_field);
+                $data_to_hubspot[$field->name] = apply_filters('gf_hubspot_data_single', $currentDataParsed, $field, $feed, $entry, $form);
             }
         }
         
@@ -525,7 +530,7 @@ class GF_HubSpot extends Base {
      */
     private function preParseGravityFormData($data, $gf_field)
     {
-        // Currently does nothing. We have no special situations to worry about.
+        // Currently does nothing. We have no special situations to worry about, yet.
 
         return $data;
     }

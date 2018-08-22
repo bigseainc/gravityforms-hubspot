@@ -161,6 +161,7 @@ class GF_HubSpot extends Base {
                 // 302 - success, but including a redirect (we're ignoring)
 
                 Tracking::log(__METHOD__ . '(): Form Successfully submitted ['.$form_id.']', $data_to_hubspot);
+                do_action('gf_hubspot_process_success', $data_to_hubspot, $form, $feed);
                 return;
             }
 
@@ -181,6 +182,8 @@ class GF_HubSpot extends Base {
                 $form 
             );
         }
+
+        do_action('gf_hubspot_process_failure', $data_to_hubspot, $form, $feed);
     } // function
 
     /**

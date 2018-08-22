@@ -207,9 +207,9 @@ class Base extends \GFFeedAddOn {
             'hutk'      => $hubspotutk,
             'ipAddress' => $ip_addr,
             'pageUrl'   => apply_filters( 'gf_hubspot_context_url', site_url() ),
-            'pageName'  => apply_filters( 'gf_hubspot_context_name', rgars($form, 'title') ),
+            'pageName'  => apply_filters( 'gf_hubspot_context_name', $this->getValue($form, 'title') ),
         );
-        if ( rgars ( $feed, 'meta/disableCookie' ) == 1 ) {
+        if ( $this->getValue($feed, 'meta/disableCookie') == 1 ) {
             unset($hs_context['hutk']);
         }
 
@@ -241,4 +241,34 @@ class Base extends \GFFeedAddOn {
 
         return $formData;
     } // function
+
+     /**
+        COMMON
+     */
+    // rgars is a pain when my trying to debug with existing data, this is to override that, and it's redundant for checks
+    protected function getValue($data, $field)
+    {
+        $data = (array)$data;
+
+        if (function_exists('rgars') && rgars($feed, 'meta/formID')) {
+            return rgars($feed, 'meta/formID');
+        }
+
+        $fieldArray = explode('/', $field);
+        if (isset($data[$fieldArray[0]])) {
+            $data = (array)$data[$fieldArray[0]];
+
+            if (count($fieldArray) == 1) {
+                if (is_array($data)) {
+                    return $data[0];
+                }
+                
+                return $data;
+            }
+
+            return $this->getValue($data, implode('/', array_slice($fieldArray, 1)));
+        }
+
+        return '';
+    }
 } // class

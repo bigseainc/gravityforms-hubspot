@@ -106,32 +106,38 @@ class GF_HubSpot extends Base {
         $this->getHubSpot();
 
         // Let's get the HubSpot Form!
-        $form_id = rgars ( $feed, 'meta/formID' );
+        $form_id = $this->getValue($feed, 'meta/formID');
         $hubspot_form = $this->_getForm( $form_id );
         if (!is_object($hubspot_form) || !isset($hubspot_form->name)) {
-            Tracking::log(__METHOD__ . '(): Invalid Form "'.$form_id.'"');
+            Tracking::log(__METHOD__ . '(): Invalid HubSpot Form "'.$form_id.'"');
+            $this->add_feed_error( 
+                'Invalid HubSpot Form "'.$form_id.'"', 
+                $feed, 
+                $entry,
+                $form 
+            );
             return;
         }
         
         // We are definitely in a good ground moving forward!
         Tracking::log(__METHOD__ . '(): Feed Processing for Form "'.$hubspot_form->name.'" ('.$form_id.')');
 
-        $fieldMap = $this->get_field_map_fields( $feed, 'fieldMap' );
+        $feedFieldMap = $this->get_field_map_fields( $feed, 'fieldMap' );
 
         $data_to_hubspot = array ();
         foreach ( $hubspot_form->formFieldGroups as $fieldGroup ) {
-            foreach ($fieldGroup->fields as $field) {
-                if ( !isset ( $fieldMap[$field->name] ) ) {
+            foreach ($fieldGroup->fields as $hubspotField) {
+                if ( !isset ( $feedFieldMap[$hubspotField->name] ) ) {
                     continue;
                 }
 
-                $gf_field = \GFFormsModel::get_field( $form, $fieldMap[$field->name]);
+                $gravityformsField = \GFFormsModel::get_field( $form, $feedFieldMap[$hubspotField->name]);
 
-                $gf_field_value = $this->get_field_value( $form, $entry, $fieldMap[$field->name] );
-                if ( $field->required && !$gf_field_value ) {
-                    Tracking::log(__METHOD__ . '(): Required field "'.$field->label.'" missing.', $field, $gf_field_value);
+                $gravityformsField_value = $this->get_field_value( $form, $entry, $feedFieldMap[$hubspotField->name] );
+                if ( $hubspotField->required && !$gravityformsField_value ) {
+                    Tracking::log(__METHOD__ . '(): Required field "'.$hubspotField->label.'" missing.', $hubspotField, $gravityformsField_value);
                     $this->add_feed_error( 
-                        'Required field "'.$field->label.'" for form "'.$hubspot_form->name.'" ['.$form_id.'] missing.', 
+                        'Required field "'.$hubspotField->label.'" for form "'.$hubspot_form->name.'" ['.$form_id.'] missing.', 
                         $feed, 
                         $entry,
                         $form 
@@ -139,8 +145,8 @@ class GF_HubSpot extends Base {
                     return;
                 }
 
-                $currentDataParsed = $this->_get_field_formatted_for_hubspot($field->type, $gf_field_value, $gf_field);
-                $data_to_hubspot[$field->name] = apply_filters('gf_hubspot_data_single', $currentDataParsed, $field, $feed, $entry, $form);
+                $currentDataParsed = $this->_get_field_formatted_for_hubspot($hubspotField, $gravityformsField_value, $gravityformsField);
+                $data_to_hubspot[$hubspotField->name] = apply_filters('gf_hubspot_data_single', $currentDataParsed, $hubspotField, $feed, $entry, $form);
             }
         }
         
@@ -152,6 +158,8 @@ class GF_HubSpot extends Base {
 
         // Try to send the form.
         try {
+            do_action('gf_hubspot_process_before_send');
+
             $result = $this->hubspot->forms()->submit($this->getPortalID(), $form_id, $data_to_hubspot);
             $status_code = $result->getStatusCode();
 
@@ -416,7 +424,7 @@ class GF_HubSpot extends Base {
      * @return string $action
      */
     public function get_column_value_formID( $feed ) {
-        $form_details = $this->_getForm( rgars( $feed, 'meta/formID' ) );
+        $form_details = $this->_getForm( $this->getValue( $feed, 'meta/formID' ) );
 
         return isset($form_details->name) ? $form_details->name : 'Form Not Found';
         
@@ -467,16 +475,16 @@ class GF_HubSpot extends Base {
         $response = $this->_getForm( $form_guid );
         if ( is_object($response) && is_array($response->formFieldGroups) ) {
             foreach ( $response->formFieldGroups as $fieldGroup ) {
-                foreach ($fieldGroup->fields as $field) {
-                    $field_label = $field->name;
-                    if (trim($field->label) != '') {
-                        $field_label = $field->label;
+                foreach ($fieldGroup->fields as $hubspotField) {
+                    $hubspotField_label = $hubspotField->name;
+                    if (trim($hubspotField->label) != '') {
+                        $hubspotField_label = $hubspotField->label;
                     }
                     $output[] = array (
-                        'label'     => $field_label,
-                        'name'      => $field->name,
-                        'required'  => $field->required,
-                        'value'     => $field->name,
+                        'label'     => $hubspotField_label,
+                        'name'      => $hubspotField->name,
+                        'required'  => $hubspotField->required,
+                        'value'     => $hubspotField->name,
                     );
                 }
             }
@@ -490,12 +498,12 @@ class GF_HubSpot extends Base {
         $posted_settings = $this->get_posted_settings();
 
         // Posted Settings override the Feed Setting.
-        if ( $form_id = rgars($posted_settings, 'formID') ) {
+        if ( $form_id = $this->getValue($posted_settings, 'formID') ) {
             // We have a POST setting
             return $form_id;
         }
 
-        if ( $form_id = rgars($feed, 'meta/formID') ) {
+        if ( $form_id = $this->getValue($feed, 'meta/formID') ) {
             // We have a saved setting
             return $form_id;
         }
@@ -504,26 +512,33 @@ class GF_HubSpot extends Base {
     } // function
 
 
-    private function _get_field_formatted_for_hubspot ( $hs_field_type, $data, $gf_field ) {
-        $data = $this->preParseGravityFormData($data, $gf_field);
+    private function _get_field_formatted_for_hubspot ( $hubspotField, $providedInput, $gravityformsField ) {
+        $providedInput = $this->preParseGravityFormData($providedInput, $hubspotField, $gravityformsField);
 
-        switch ( $hs_field_type ) {
+        switch ( $hubspotField->type ) {
             case 'date' :
-                return strtotime($data) * 1000;
-                break;
+                return strtotime($providedInput) * 1000;
             case 'enumeration' :
-                // We're expecting multiple pieces of data
-                if ( !is_array( $data ) ) {
-                    $data = explode(', ', $data);
-                    foreach ( $data as &$content ) {
-                        $content = trim($content);
-                    }
+                switch ($hubspotField->fieldType) {
+                    case 'booleancheckbox' :
+                        if ($providedInput != '') {
+                            return 'true';
+                        }
+                        return 'false';
+                    case 'radio' :
+                        return $providedInput;
+                    default :
+                        // We're expecting multiple pieces of data
+                        if ( !is_array( $providedInput ) ) {
+                            $providedInput = explode(', ', $providedInput);
+                            foreach ( $providedInput as &$content ) {
+                                $content = trim($content);
+                            }
+                        }
+                        return implode(';', $providedInput);
                 }
-
-                return implode(';', $data);
-                break;
             default :
-                return $data;
+                return $providedInput;
         }
     } // function
 
@@ -533,7 +548,7 @@ class GF_HubSpot extends Base {
      *  We know that some of the data types coming from Gravity Forms will need to be manipulated. 
      *      In this case, we're converting the Field type into a semi-colon separated string.
      */
-    private function preParseGravityFormData($data, $gf_field)
+    private function preParseGravityFormData($data, $gravityformsField)
     {
         // Currently does nothing. We have no special situations to worry about, yet.
 

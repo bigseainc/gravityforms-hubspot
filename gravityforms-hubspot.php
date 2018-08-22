@@ -13,6 +13,7 @@
     define('GF_HUBSPOT_PATH', WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/");
     define('GF_HUBSPOT_VERSION', '4.0.1');
     if ( !defined('GF_HUBSPOT_DEBUG') ) define('GF_HUBSPOT_DEBUG', false);
+    if ( !defined('GF_HUBSPOT_RUN_TESTS') ) define('GF_HUBSPOT_RUN_TESTS', false);
 
     // Start up the plugin after GravityForms is loaded.
     add_action( 'gform_loaded', array( 'GF_HubSpot_Bootstrap', 'load' ), 5 );
@@ -89,4 +90,8 @@
 
     function gf_hubspot() {
         return \BigSea\GFHubSpot\GF_HubSpot::get_instance();
+    }
+
+    if (GF_HUBSPOT_DEBUG && GF_HUBSPOT_RUN_TESTS) {
+        require_once(GF_HUBSPOT_PATH . 'tests/submission.test.php');
     }

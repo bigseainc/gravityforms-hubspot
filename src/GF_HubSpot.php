@@ -145,6 +145,7 @@ class GF_HubSpot extends Base {
         }
         
         $data_to_hubspot = apply_filters( 'gf_hubspot_data_outgoing', $data_to_hubspot, $form, $feed );
+        $data_to_hubspot = apply_filters( 'gf_hubspot_data_object', $data_to_hubspot, $form, $feed );
 
         // With all of the data organized now, let's get the HubSpot call ready.
         $data_to_hubspot['hs_context'] = json_encode($this->getHubSpotContextCookie($form, $feed));

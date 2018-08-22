@@ -4,7 +4,7 @@ Donate link: http://bigsea.co/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.9.6
-Stable tag: 4.1
+Stable tag: 4.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,10 @@ We kept the API Key feature in earlier versions of our plugin as a "just in case
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 4.0.1 =
+* [New] New Filters: `gf_hubspot_process_success` and `gf_hubspot_process_failure` actions, as well as `gf_hubspot_data_single` filter for modifying a value on a single field basis.
+* [DEPRECATION] `gf_hubspot_data_outgoing` in favor of `gf_hubspot_data_object` ... both will remain in the code.
 
 = 4.0 =
 * [New] Support for "File Upload" field in Gravity Forms. Takes the resulting upload URLs and send them to HubSpot in a semi-colon delimited list.

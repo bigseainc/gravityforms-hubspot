@@ -29,6 +29,10 @@ If you’ve got a [WordPress](https://wordpress.org) site that uses [Gravity For
 
 *This plugin provides many checks for a proper version of Gravity Forms, as well as HubSpot oAuth validation. Notices will appear at the top of the Admin panel until these issues are resolved or the plugin is deactivated.*
 
+## Creator
+
+* Chris Lagasse <chris@bigsea.co>
+
 ## Contributors
 
-Chris Lagasse <chris@bigsea.co>
+* Josh Allen <josh@cirkut.net>

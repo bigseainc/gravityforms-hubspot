@@ -1,10 +1,10 @@
 === HubSpot for Gravity Forms ===
-Contributors: Big Sea, Soben, bloqhead
+Contributors: Big Sea, Soben
 Donate link: http://bigsea.co/
 Tags: hubspot, gravity, forms, submit, submission, lead, api, gravity forms
 Requires at least: 3.5
 Tested up to: 4.9.6
-Stable tag: 4.1
+Stable tag: 4.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,9 @@ We kept the API Key feature in earlier versions of our plugin as a "just in case
 1. HubSpot settings found in Forms > Settings > HubSpot
 
 == Changelog ==
+
+= 4.1.1 =
+* [FIX] Modification of strok, via adammichaelroach
 
 = 4.1 =
 * [UPDATE] Improved "enumeration" field type support. Now more properly handles Radio, Boolean Checkboxes (aka 'Single Checkbox'), and Checkboxes fields from HubSpot with more accuracy.

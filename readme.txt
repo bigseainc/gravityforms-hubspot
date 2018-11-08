@@ -69,7 +69,7 @@ We kept the API Key feature in earlier versions of our plugin as a "just in case
 == Changelog ==
 
 = 4.1.1 =
-* [FIX] Modification of strok, via adammichaelroach
+* [FIX] Modification of strtok, via adammichaelroach
 
 = 4.1 =
 * [UPDATE] Improved "enumeration" field type support. Now more properly handles Radio, Boolean Checkboxes (aka 'Single Checkbox'), and Checkboxes fields from HubSpot with more accuracy.

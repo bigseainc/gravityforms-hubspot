@@ -207,7 +207,7 @@ class Base extends \GFFeedAddOn {
             'hutk'      => $hubspotutk,
             'ipAddress' => $ip_addr,
             'pageUrl'   => apply_filters( 'gf_hubspot_context_url', site_url(strtok($_SERVER['REQUEST_URI'], '?')) ),
-            'pageName'  => apply_filters( 'gf_hubspot_context_name', $this->getValue($form, 'title') ),
+            'pageName'  => apply_filters( 'gf_hubspot_context_name', get_the_title() ),
         );
         if ( $this->getValue($feed, 'meta/disableCookie') == 1 ) {
             unset($hs_context['hutk']);
